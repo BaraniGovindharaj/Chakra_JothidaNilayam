@@ -73,17 +73,25 @@ h6,
   margin: 0 auto;
 }
 
-.navbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
-  padding: 1.5rem 0;
+.navbar-wrap {
   position: sticky;
   top: 0;
   z-index: 1000;
   background: rgba(18, 3, 39, 0.75);
   backdrop-filter: blur(8px);
   width: 100%;
+}
+
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.5rem 0;
+}
+
+.navbar.section {
+  width: min(1120px, 92%);
+  margin: 0 auto;
 }
 .nav-link{
   color: var(--color-text-muted);
@@ -100,6 +108,13 @@ h6,
   display: flex;
   align-items: center;
   gap: 1.75rem;
+}
+
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: auto;
 }
 
 .navbar-overlay {
@@ -251,16 +266,25 @@ h6,
 }
 
 .menu-toggle {
-  display: none;
+  display: none !important;
   border: 1px solid var(--color-border);
   background: transparent;
-  color: var(--color-text-primary);
+  color: #ffffff;
   font-size: 1.2rem;
   border-radius: var(--radius-md);
   padding: 0.4rem 0.65rem;
   align-items: center;
   justify-content: center;
   cursor: pointer;
+}
+
+.menu-toggle .MuiSvgIcon-root {
+  color: #ffffff !important;
+}
+
+.drawer-close,
+.drawer-close .MuiSvgIcon-root {
+  color: #ffffff !important;
 }
 
 .navbar nav {
@@ -693,9 +717,14 @@ h6,
   }
 
   .menu-toggle {
-    display: inline-flex;
+    display: inline-flex !important;
     align-items: center;
     justify-content: center;
+  }
+
+  .navbar-right {
+    gap: 0.35rem;
+    margin-left: auto;
   }
 
   .navbar-overlay {
@@ -735,7 +764,7 @@ h6,
     width: 100%;
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-end;
     padding: 1.15rem 1rem;
     border-bottom: 1px solid var(--color-border);
   }
@@ -763,11 +792,27 @@ h6,
   }
 
   .navbar-actions {
-    width: 100%;
-    flex-direction: column;
-    padding: 0 1rem;
-    margin-top: auto;
-    margin-bottom: 1rem;
+    margin-left: auto;
+    margin-right: 0.5rem;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.45rem;
+  }
+
+  .navbar-actions .btn {
+    width: auto;
+    padding: 0.5rem 0.9rem;
+    font-size: var(--font-size-xs);
+  }
+
+  .navbar-actions .btn:not(.btn-primary) {
+    display: none;
+  }
+}
+
+@media (min-width: 1024px) {
+  .navbar {
+    justify-content: space-between;
   }
 }
 
