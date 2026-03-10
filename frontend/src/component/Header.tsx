@@ -74,7 +74,20 @@ function Header({ brandName, navigation, onBookNow, onLogin, onHome, onSectionNa
       >
         {isMenuOpen ? <CloseRoundedIcon fontSize="small" /> : <MenuRoundedIcon fontSize="small" />}
       </IconButton>
+      <Box
+        className={`navbar-overlay ${isMenuOpen ? 'is-open' : ''}`}
+        onClick={handleNavClick}
+      />
       <Box className={`navbar-content ${isMenuOpen ? 'is-open' : ''}`}>
+        <Box className="drawer-head">
+          <Box className="drawer-logo">
+            <AutoAwesomeOutlinedIcon className="logo-icon" fontSize="small" />
+            <Typography component="span">{brandName || 'Sri Chakra Jothidanilayam'}</Typography>
+          </Box>
+          <IconButton className="drawer-close" onClick={handleNavClick} aria-label="Close menu">
+            <CloseRoundedIcon fontSize="small" />
+          </IconButton>
+        </Box>
         <Box component="nav">
           {navItems.map((item) => (
             <Link
@@ -103,6 +116,7 @@ function Header({ brandName, navigation, onBookNow, onLogin, onHome, onSectionNa
             <CommonButton
               className="btn btn-primary"
               onClick={() => {
+                handleNavClick()
                 setAvatarAnchorEl(null)
                 onDashboard?.() ?? setActivePage('portal')
               }}
@@ -159,6 +173,7 @@ function Header({ brandName, navigation, onBookNow, onLogin, onHome, onSectionNa
                     className="avatar-popover-item avatar-popover-item-logout"
                     role="menuitem"
                     onClick={() => {
+                      handleNavClick()
                       setAvatarAnchorEl(null)
                       logout()
                     }}

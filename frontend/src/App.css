@@ -102,6 +102,27 @@ h6,
   gap: 1.75rem;
 }
 
+.navbar-overlay {
+  display: none;
+}
+
+.drawer-head {
+  display: none;
+}
+
+.drawer-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-family: var(--font-family-heading);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+}
+
+.drawer-close {
+  color: var(--color-text-primary);
+}
+
 .navbar-actions {
   display: flex;
   align-items: center;
@@ -625,6 +646,25 @@ h6,
     grid-template-columns: 1fr;
   }
 
+  .about-image-wrap {
+    padding: 0;
+  }
+
+  .about-image {
+    min-height: 280px;
+  }
+
+  .about-quote-card {
+    position: static;
+    max-width: 100%;
+    margin-top: 0.9rem;
+  }
+
+  .stats {
+    flex-wrap: wrap;
+    gap: 0.9rem;
+  }
+
   .hero h1 {
     font-size: 2rem;
   }
@@ -636,29 +676,86 @@ h6,
 }
 
 @media (max-width: 768px) {
+  .navbar.section {
+    width: 100%;
+    margin: 0;
+    padding: 0.9rem 0.75rem;
+  }
+
+  .navbar {
+    justify-content: space-between;
+    position: sticky;
+  }
+
+  .logo {
+    margin-left: 0;
+    font-size: var(--font-size-md);
+  }
+
   .menu-toggle {
     display: inline-flex;
     align-items: center;
     justify-content: center;
   }
 
+  .navbar-overlay {
+    display: none;
+  }
+
+  .navbar-overlay.is-open {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(8, 3, 20, 0.72);
+    z-index: 1190;
+  }
+
   .navbar-content {
     display: none;
-    width: 100%;
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: min(82vw, 380px);
+    height: 100vh;
     flex-direction: column;
     align-items: flex-start;
-    gap: 0.9rem;
-    padding-top: 0.5rem;
+    gap: 1rem;
+    padding: 0;
+    background: #1a0738;
+    border-left: 1px solid var(--color-border);
+    border-radius: 0;
+    z-index: 1200;
   }
 
   .navbar-content.is-open {
     display: flex;
   }
 
+  .drawer-head {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.15rem 1rem;
+    border-bottom: 1px solid var(--color-border);
+  }
+
   .navbar nav {
     width: 100%;
     flex-direction: column;
-    gap: 0.8rem;
+    gap: 0;
+  }
+
+  .navbar nav .nav-link {
+    width: 100%;
+    padding: 1rem;
+    font-size: var(--font-size-md);
+    font-family: var(--font-family-body);
+    font-weight: var(--font-weight-semibold);
+    letter-spacing: 0.05em;
+    text-transform: capitalize;
+    color: var(--color-text-primary);
+    border-bottom: 1px solid var(--color-border);
   }
 
   .navbar-content .btn {
@@ -668,6 +765,9 @@ h6,
   .navbar-actions {
     width: 100%;
     flex-direction: column;
+    padding: 0 1rem;
+    margin-top: auto;
+    margin-bottom: 1rem;
   }
 }
 

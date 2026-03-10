@@ -17,6 +17,7 @@ export type HomeContent = {
       description: string
       price: string
       cta: string
+      iconName?: string
     }[]
   }
   aboutSection: {
