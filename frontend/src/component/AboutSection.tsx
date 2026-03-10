@@ -1,5 +1,6 @@
 import type { HomeContent } from './types'
 import ArrowForwardRoundedIcon from '@mui/icons-material/ArrowForwardRounded'
+import { Box, Link, Typography } from '@mui/material'
 
 type Props = {
   content: HomeContent | null
@@ -11,43 +12,43 @@ function AboutSection({ content }: Props) {
   const about = content.aboutSection
 
   return (
-    <section id="about" className="section about">
-      <div className="about-image-wrap">
-        <div className="about-image" aria-hidden="true">
-          <img src={about?.image_url} alt="Astrologer reading a chart" className="aboutImage" />
-        </div>
+    <Box component="section" id="about" className="section about">
+      <Box className="about-image-wrap">
+        <Box className="about-image" aria-hidden="true">
+          <Box component="img" src={about?.image_url} alt="Astrologer reading a chart" className="aboutImage" />
+        </Box>
         {about?.quote && (
-          <div className="about-quote-card">
-            <p className="about-quote">“{about.quote}”</p>
-            <p className="about-quote-subtitle">{about.quote_description}</p>
-          </div>
+          <Box className="about-quote-card">
+            <Typography component="p" className="about-quote">“{about.quote}”</Typography>
+            <Typography component="p" className="about-quote-subtitle">{about.quote_description}</Typography>
+          </Box>
         )}
-      </div>
-      <div className="about-content">
-        <p className="section-kicker">ABOUT SRI ASTROLOGY</p>
-        <h2>{about?.title}</h2>
-        <p>{about?.description}</p>
-        <p>{about?.extendedDescription}</p>
-        <div className="stats">
-          <div>
-            <strong>{about?.experience}</strong>
-            <span>Years Experience</span>
-          </div>
-          <div>
-            <strong>{about?.clients}</strong>
-            <span>Clients Trusted</span>
-          </div>
-          <div>
-            <strong>{about?.satisfaction}</strong>
-            <span>Client Satisfaction</span>
-          </div>
-        </div>
-        <a href="#contact" className="learn-more">
-          <span>{about?.cta}</span>
+      </Box>
+      <Box className="about-content">
+        <Typography component="p" className="section-kicker">ABOUT SRI ASTROLOGY</Typography>
+        <Typography component="h2" variant="h2">{about?.title}</Typography>
+        <Typography component="p">{about?.description}</Typography>
+        <Typography component="p">{about?.extendedDescription}</Typography>
+        <Box className="stats">
+          <Box>
+            <Typography component="strong">{about?.experience}</Typography>
+            <Typography component="span">Years Experience</Typography>
+          </Box>
+          <Box>
+            <Typography component="strong">{about?.clients}</Typography>
+            <Typography component="span">Clients Trusted</Typography>
+          </Box>
+          <Box>
+            <Typography component="strong">{about?.satisfaction}</Typography>
+            <Typography component="span">Client Satisfaction</Typography>
+          </Box>
+        </Box>
+        <Link href="#contact" className="learn-more" underline="none">
+          <Typography component="span">{about?.cta}</Typography>
           <ArrowForwardRoundedIcon fontSize="small" />
-        </a>
-      </div>
-    </section>
+        </Link>
+      </Box>
+    </Box>
   )
 }
 

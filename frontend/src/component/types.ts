@@ -64,3 +64,22 @@ export type HomeContent = {
   }
 }
 
+export type PortalView = 'bookings' | 'book' | 'profile'
+
+export type BookingRecord = {
+  _id: string
+  service: string
+  date: string
+  time: string
+  amount?: number | string
+  iscancelled?: boolean
+  inprogress?: boolean
+}
+
+export type ServiceOption = {
+  title: string
+  duration: string
+  amount: number
+}
+
+

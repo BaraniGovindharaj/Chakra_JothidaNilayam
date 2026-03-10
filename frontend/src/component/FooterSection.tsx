@@ -1,5 +1,7 @@
 import type { HomeContent } from './types'
 import AutoAwesomeOutlinedIcon from '@mui/icons-material/AutoAwesomeOutlined';
+import { Box, Button, Typography } from '@mui/material'
+import CommonButton from './ReusableButton/CommonButton'
 
 type Props = {
   content: HomeContent | null
@@ -26,39 +28,38 @@ function FooterSection({ content, onHome }: Props) {
   }
 
   return (
-    <footer className="footer section">
-      <div>
-        <div className="logo">
+    <Box component="footer" className="footer section">
+      <Box>
+        <Box className="logo">
           <AutoAwesomeOutlinedIcon className="logo-icon" fontSize="small" />
-          {content.brand?.name}
-        </div>
-        <p>{footer?.description}</p>
-      </div>
-      <div>
-        <h4>Quick Links</h4>
+          <Typography component="span">{content.brand?.name}</Typography>
+        </Box>
+        <Typography component="p">{footer?.description}</Typography>
+      </Box>
+      <Box>
+        <Typography component="h4" variant="h4" className='footer-header'>Quick Links</Typography>
         {footer?.quickLinks?.map((item) => (
-          <button
+          <Button
             key={item}
-            type="button"
             className="footer-link"
             onClick={() => handleSectionNavigation(item)}
           >
             {item}
-          </button>
+          </Button>
         ))}
-      </div>
-      <div>
-        <h4>Services</h4>
-        {footer?.services?.map((item) => <p key={item}>{item}</p>)}
-      </div>
-      <div>
-        <h4>Contact Us</h4>
-        <p>{footer?.contact?.address}</p>
-        <p>{footer?.contact?.phone}</p>
-        <p>{footer?.contact?.email}</p>
-        <p>{footer?.copyright}</p>
-      </div>
-    </footer>
+      </Box>
+      <Box>
+        <Typography component="h4" variant="h4" className='footer-header'>Services</Typography>
+        {footer?.services?.map((item) => <Typography component="p" key={item}>{item}</Typography>)}
+      </Box>
+      <Box>
+        <Typography component="h4" variant="h4" className='footer-header'>Contact Us</Typography>
+        <Typography component="p">{footer?.contact?.address}</Typography>
+        <Typography component="p">{footer?.contact?.phone}</Typography>
+        <Typography component="p">{footer?.contact?.email}</Typography>
+        <Typography component="p">{footer?.copyright}</Typography>
+      </Box>
+    </Box>
   )
 }
 
