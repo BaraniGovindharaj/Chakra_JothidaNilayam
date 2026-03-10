@@ -85,7 +85,22 @@ export const http = async <T>(path: string, init: RequestInit = {}): Promise<T> 
 		const interceptedResponse = await runResponseInterceptors(response)
 
 		if (!interceptedResponse.ok) {
-			const message = `HTTP ${interceptedResponse.status}: ${interceptedResponse.statusText}`
+			let message = `HTTP ${interceptedResponse.status}: ${interceptedResponse.statusText}`
+
+			try {
+				const errorPayload = await interceptedResponse.json()
+				if (
+					typeof errorPayload === 'object' &&
+					errorPayload !== null &&
+					'message' in errorPayload &&
+					typeof (errorPayload as { message?: unknown }).message === 'string'
+				) {
+					message = (errorPayload as { message: string }).message
+				}
+			} catch {
+				// keep default HTTP status message when response body is not JSON
+			}
+
 			throw new Error(message)
 		}
 

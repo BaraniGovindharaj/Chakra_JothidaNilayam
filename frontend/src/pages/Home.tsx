@@ -152,6 +152,13 @@ function Home() {
 	}, [])
 
 	const handleBookNowClick = () => {
+		if (activePage === 'login' || activePage === 'signup') {
+			showToast('Please login to book a service.', 'warning')
+			setActivePage('login')
+			updatePath('/login')
+			return
+		}
+
 		if (!isLoggedIn) {
 			showToast('Please login to book a service.', 'warning')
 			setActivePage('login')

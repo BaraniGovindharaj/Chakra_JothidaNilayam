@@ -10,6 +10,7 @@ import CommonButton from '../ReusableButton/CommonButton'
 import type { BookingRecord, PortalView, ServiceOption } from '../types'
 import { apiPost } from '../../services/apiHandler'
 import showToast from '../Toast/Toast'
+import { useUser } from '../../context/userProvider'
 
 type PortalContentProps = {
   activeView: PortalView
@@ -64,7 +65,8 @@ function PortalContent({
   const [newPassword, setNewPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [currentPassword, setCurrentPassword] = useState('')
-  const isConfirmPasswordMatch = confirmPassword.trim().length > 0 && confirmPassword === newPassword
+  const isConfirmPasswordMatch = confirmPassword.trim().length > 0 && confirmPassword === newPassword;
+  const { setActivePage } = useUser()
 
   const changePassword = async () => {
     if (!userId) {
@@ -93,6 +95,9 @@ function PortalContent({
       setNewPassword('')
       setConfirmPassword('')
       setShowNewPassword(false)
+      setActivePage('login')
+      localStorage.clear()
+      
     } catch (error: any) {
       showToast(error?.message, 'error')
     }

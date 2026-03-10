@@ -195,6 +195,22 @@ class ChangePasswordRequest(BaseModel):
     current_password: str
     new_password: str
 
+    @field_validator('user_id')
+    @classmethod
+    def validate_user_id(cls, value: str) -> str:
+        normalized = value.strip()
+        if not normalized:
+            raise ValueError('User id is required')
+        return normalized
+
+    @field_validator('current_password')
+    @classmethod
+    def validate_current_password(cls, value: str) -> str:
+        normalized = value.strip()
+        if not normalized:
+            raise ValueError('Current password is required')
+        return normalized
+
     @field_validator('new_password')
     @classmethod
     def validate_new_password(cls, value: str) -> str:
@@ -234,7 +250,7 @@ async def validate_new_password(payload: ChangePasswordRequest):
     if current_hash != user['passwordHash']:
         raise ValueError('Current password is incorrect')
 
-    if payload.current_password.strip() == payload.new_password:
+    if payload.current_password == payload.new_password:
         raise ValueError('New password must be different from current password')
 
     password_salt = secrets.token_hex(16)
