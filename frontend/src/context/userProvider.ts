@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react'
+import showToast from '../component/Toast/Toast'
 
 type UserProfile = {
 	userId: string
@@ -77,6 +78,10 @@ export function UserProvider({ children }: UserProviderProps) {
 		localStorage.removeItem(USER_EMAIL_KEY)
 		setUser(null)
 		setActivePage('home')
+		if (window.location.pathname.startsWith('/dashboard')) {
+			window.history.pushState({}, '', '/home')
+		}
+		showToast('Logged out successfully', 'success')
 	}
 
 	const value = useMemo<UserContextValue>(

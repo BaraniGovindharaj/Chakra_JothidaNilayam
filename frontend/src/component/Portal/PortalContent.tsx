@@ -9,6 +9,7 @@ import { Box, IconButton, InputAdornment, TextField, Typography } from '@mui/mat
 import CommonButton from '../ReusableButton/CommonButton'
 import type { BookingRecord, PortalView, ServiceOption } from '../types'
 import { apiPost } from '../../services/apiHandler'
+import showToast from '../Toast/Toast'
 
 type PortalContentProps = {
   activeView: PortalView
@@ -67,33 +68,33 @@ function PortalContent({
 
   const changePassword = async () => {
     if (!userId) {
-      alert('User not found. Please login again.')
+      showToast('User not found. Please login again.', 'warning')
       return
     }
 
     if (!currentPassword || !newPassword || !confirmPassword) {
-      alert('Please fill all password fields.')
+      showToast('Please fill all password fields.', 'warning')
       return
     }
 
     if (newPassword !== confirmPassword) {
-      alert('New password and confirm password must match.')
+      showToast('New password and confirm password must match.', 'warning')
       return
     }
 
     try {
-      await apiPost('/api/v1/change-password', {
+      const response: any = await apiPost('/api/v1/change-password', {
         user_id: userId,
         current_password: currentPassword,
         new_password: newPassword,
       })
-      alert('Password changed successfully!')
+      showToast(response?.message, 'success')
       setCurrentPassword('')
       setNewPassword('')
       setConfirmPassword('')
       setShowNewPassword(false)
-    } catch {
-      alert('Failed to change password. Please try again.')
+    } catch (error: any) {
+      showToast(error?.message, 'error')
     }
   }
 

@@ -6,7 +6,8 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
 import { Box, IconButton, TextField, Typography } from '@mui/material'
 import CommonButton from '../ReusableButton/CommonButton'
 import { apiPost } from '../../services/apiHandler';
-import { useUser } from '../../context/userProvider'
+import { useUser } from '../../context/userProvider';
+import showToast from '../Toast/Toast'
 type LoginPageProps = {
   brandName?: string
   onBackToHome: () => void
@@ -26,13 +27,11 @@ function LoginPage({ brandName, onBackToHome, onBookNow, onSignup }: LoginPagePr
   const userLogin = async () => {
     try {
       const response:any = await apiPost('/api/v1/login', formData)
-      console.log('Login response:', response)
       setUserFromLogin(response?.data || {})
       setActivePage('portal')
-      alert('Login successful!')
-    } catch (error) {
-      alert('Login failed. Please check your credentials and try again.')
-      console.error('Login error:', error)
+     showToast(response?.message, 'success')
+    } catch (error:any) {
+      showToast(error?.message, 'error')
     }
   }
 

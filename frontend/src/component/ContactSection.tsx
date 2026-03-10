@@ -4,6 +4,7 @@ import CommonButton from './ReusableButton/CommonButton'
 import { apiPost } from '../services/apiHandler'
 import type { HomeContent } from './types'
 import { useUser } from '../context/userProvider'
+import showToast from './Toast/Toast'
 
 type Props = {
   content: HomeContent | null
@@ -51,24 +52,23 @@ function ContactSection({ content }: Props) {
     event.preventDefault()
 
     if (!userId) {
-      alert('Please login to send a message.')
+      showToast('Please login to send a message.', 'warning')
       setActivePage('login')
       return
     }
 
     if (!formData.userName.trim() || !formData.phoneNumber.trim() || !formData.message.trim()) {
-      alert('Please fill user name, phone number, and message.')
+      showToast('Please fill user name, phone number, and message.', 'warning')
       return
     }
 
     try {
-      await apiPost('/api/v1/contact-message', formData)
-      alert('Message sent successfully!')
+      const response: any = await apiPost('/api/v1/contact-message', formData)
+      showToast(response?.message, 'success')
       setFormData({ userName: '', phoneNumber: '', email: '', message: '', userId: userId || undefined })
-    } catch (error) {
-      console.error('Error saving contact message:', error)
+    } catch (error: any) {
       setActivePage('login')
-      alert('Failed to send message. Please try again.')
+      showToast(error?.message, 'error')
     }
   }
 

@@ -1516,6 +1516,27 @@ h6,
   }
 }
 
+.Toastify__toast-container .custom-toast {
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+  border-radius: var(--radius-md);
+  backdrop-filter: blur(90px);
+}
+.Toastify__toast-container .custom-toast .Toastify__close-button--light {
+  color: var(--color-text-primary);
+}
+
+
+.custom-toast .Toastify__toast-body {
+  font-family: var(--font-family-body);
+  font-size: var(--font-size-sm);
+}
+
+.custom-toast-progress {
+  background: var(--color-accent);
+}
+
 
 @font-face {
   font-family: 'Public Sans - Regular';

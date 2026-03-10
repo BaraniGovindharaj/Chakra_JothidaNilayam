@@ -10,9 +10,10 @@ import PortalContent from './Portal/PortalContent'
 import type { BookingRecord, PortalView, ServiceOption } from './types'
 import { apiGet, apiPost } from '../services/apiHandler'
 import { useUser } from '../context/userProvider'
+import showToast from './Toast/Toast'
 
 type PortalPageProps = {
-  onBackToHome: () => void
+  onBackToHome: (section?: string) => void
   brandName?: string
 }
 
@@ -141,8 +142,8 @@ function PortalPage({ onBackToHome, brandName }: PortalPageProps) {
         (first, second) => new Date(second.date).getTime() - new Date(first.date).getTime(),
       )
       setBookings(sorted)
-    } catch (error) {
-      console.error('Error fetching bookings:', error)
+    } catch (error: any) {
+      showToast(error?.message, 'error')
       setBookings([])
     } finally {
       setIsLoadingBookings(false)
@@ -178,8 +179,8 @@ function PortalPage({ onBackToHome, brandName }: PortalPageProps) {
         : []
 
       setServiceOptions(serviceItems)
-    } catch (error) {
-      console.error('Error fetching services:', error)
+    } catch (error: any) {
+      showToast(error?.message, 'error')
       setServiceOptions([])
     } finally {
       setIsLoadingServices(false)
@@ -268,12 +269,13 @@ function PortalPage({ onBackToHome, brandName }: PortalPageProps) {
     }
 
     try {
-      await apiPost<ApiResponse<BookingRecord>>('/api/v1/user-booking', bookingData)
+      const response = await apiPost<ApiResponse<BookingRecord>>('/api/v1/user-booking', bookingData)
+      showToast(response?.message, 'success')
       resetBookingForm()
       await loadBookings()
       setActiveView('bookings')
-    } catch (error) {
-      console.error('Booking failed:', error)
+    } catch (error: any) {
+      showToast(error?.message, 'error')
     }
   }
 
@@ -301,7 +303,8 @@ function PortalPage({ onBackToHome, brandName }: PortalPageProps) {
     <Box className="portal-page-wrap">
       <Header
         brandName={brandName}
-        onHome={onBackToHome}
+        onHome={() => onBackToHome('')}
+        onSectionNavigate={(section) => onBackToHome(section)}
         onBookNow={() => setActiveView('book')}
       />
 

@@ -30,8 +30,6 @@ function Header({ brandName, navigation, onBookNow, onLogin, onHome, onSectionNa
     .map((part) => part[0]?.toUpperCase() || '')
     .join('')
 
-  console.log('Header - isLoggedIn:', isLoggedIn)
-
   const handleNavClick = () => {
     setIsMenuOpen(false)
     setAvatarAnchorEl(null)

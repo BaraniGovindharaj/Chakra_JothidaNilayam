@@ -13,6 +13,7 @@ import TestimonialsSection from '../component/TestimonialsSection'
 import { type HomeContent } from '../component/types'
 import { useUser } from '../context/userProvider'
 import { apiGet } from '../services/apiHandler'
+import showToast from '../component/Toast/Toast'
 import '../App.css'
 
 function Home() {
@@ -47,6 +48,11 @@ function Home() {
 			const path = window.location.pathname.toLowerCase()
 
 			if (path.startsWith('/dashboard')) {
+				if (!isLoggedIn) {
+					setActivePage('login')
+					updatePath('/login', replace)
+					return
+				}
 				setActivePage('portal')
 				return
 			}
@@ -68,7 +74,9 @@ function Home() {
 				return
 			}
 
-			goHome('', replace)
+			setActivePage('home')
+			updatePath('/home', replace)
+			setPendingSection('')
 		}
 
 		syncFromPath(true)
@@ -79,7 +87,7 @@ function Home() {
 
 		window.addEventListener('popstate', onPopState)
 		return () => window.removeEventListener('popstate', onPopState)
-	}, [setActivePage])
+	}, [isLoggedIn, setActivePage])
 
 	useEffect(() => {
 		if (activePage !== 'home') {
@@ -128,10 +136,9 @@ function Home() {
 
 	const servcieDetails = async () => {
 		try {
-			const data = await apiGet('/api/v1/service-details')
-			console.log('Service Details:', data)
-		} catch (error) {
-			console.error('Error fetching service details:', error)
+			await apiGet('/api/v1/service-details')
+		} catch (error: any) {
+			showToast(error?.message, 'error')
 		}
 	}
 
@@ -146,7 +153,7 @@ function Home() {
 
 	const handleBookNowClick = () => {
 		if (!isLoggedIn) {
-			alert('Please login to book a service.')
+			showToast('Please login to book a service.', 'warning')
 			setActivePage('login')
 			updatePath('/login')
 			return
@@ -171,7 +178,7 @@ function Home() {
 	if (activePage === 'portal') {
 		return (
 			<PortalPage
-				onBackToHome={() => goHome('')}
+				onBackToHome={(section = '') => goHome(section)}
 				brandName={content?.brand?.name}
 			/>
 		)

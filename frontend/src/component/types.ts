@@ -95,4 +95,14 @@ export type ServiceOption = {
   amount: number
 }
 
+export type ToastOptions = {
+    position: "top-right";
+    autoClose: number;
+    hideProgressBar: boolean;
+    closeOnClick: boolean;
+    pauseOnHover: boolean;
+    draggable: boolean;
+  progress?: number;
+}
+
 

@@ -107,6 +107,5 @@ export const apiPost = <T>(path: string, body: unknown, init: RequestInit = {}) 
 
 
 addErrorInterceptor((error) => {
-	console.error('HTTP interceptor error:', error)
 	return error
 })
