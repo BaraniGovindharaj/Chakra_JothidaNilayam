@@ -57,7 +57,8 @@ function Header({ brandName, navigation, onBookNow, onLogin, onHome, onSectionNa
   }
 
   return (
-    <Box component="header" className="navbar section">
+    <Box component="header" className="navbar-wrap">
+      <Box className="navbar section">
       <Box className="logo" onClick={() => {
         onSectionNavigate?.('')
         onHome?.()
@@ -66,15 +67,21 @@ function Header({ brandName, navigation, onBookNow, onLogin, onHome, onSectionNa
         <AutoAwesomeOutlinedIcon className="logo-icon" fontSize="small" />
         <Typography component="span">{brandName || 'Sri Chakra Jothidanilayam'}</Typography>
       </Box>
-      <IconButton
-        className="menu-toggle"
-        aria-label="Toggle navigation menu"
-        aria-expanded={isMenuOpen}
-        onClick={() => setIsMenuOpen((open) => !open)}
-      >
-        {isMenuOpen ? <CloseRoundedIcon fontSize="small" /> : <MenuRoundedIcon fontSize="small" />}
-      </IconButton>
+      <Box className="navbar-right">
+      <Box
+        className={`navbar-overlay ${isMenuOpen ? 'is-open' : ''}`}
+        onClick={handleNavClick}
+      />
       <Box className={`navbar-content ${isMenuOpen ? 'is-open' : ''}`}>
+        <Box className="drawer-head">
+          {/* <Box className="drawer-logo">
+            <AutoAwesomeOutlinedIcon className="logo-icon" fontSize="small" />
+            <Typography component="span">{brandName || 'Sri Chakra Jothidanilayam'}</Typography>
+          </Box> */}
+          <IconButton className="drawer-close" onClick={handleNavClick} aria-label="Close menu">
+            <CloseRoundedIcon fontSize="small" />
+          </IconButton>
+        </Box>
         <Box component="nav">
           {navItems.map((item) => (
             <Link
@@ -88,90 +95,91 @@ function Header({ brandName, navigation, onBookNow, onLogin, onHome, onSectionNa
             </Link>
           ))}
         </Box>
-        <Box className="navbar-actions">
-          {!isLoggedIn ? (
-            <CommonButton
-              // className="btn btn-secondary"
-              onClick={() => {
-                handleNavClick()
-                onLogin?.()
-              }}
-            >
-              Login
-            </CommonButton>
-          ) : (
-            <CommonButton
-              className="btn btn-primary"
-              onClick={() => {
-                setAvatarAnchorEl(null)
-                onDashboard?.() ?? setActivePage('portal')
-              }}
-            >
-              Dashboard
-            </CommonButton>
-          )}
-          {!isLoggedIn ? (
-            <CommonButton
-              className="btn btn-primary"
-              onClick={() => {
-                handleNavClick()
-                onBookNow?.()
-              }}
-            >
-              Book Consultation
-            </CommonButton>
-          ) : (
-            <Box className="avatar-menu-wrap">
-              <IconButton
-                className="avatar-btn"
-                aria-label="User Avatar"
-                aria-expanded={isLogoutPopoverOpen}
-                onClick={(event) => setAvatarAnchorEl(avatarAnchorEl ? null : event.currentTarget)}
-              >
-                <Avatar className="avatar" >{avatarInitials || 'US'}</Avatar>
-              </IconButton>
-              <Popover
-                open={isLogoutPopoverOpen}
-                anchorEl={avatarAnchorEl}
-                onClose={() => setAvatarAnchorEl(null)}
-                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-                transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-                aria-labelledby="avatar-popover-title"
-                PaperProps={{ className: 'avatar-popover-paper' }}
-              >
-                <Box className="avatar-popover-content" role="menu" aria-label="User menu">
-                  <Box className="avatar-popover-profile">
-                    <Typography id="avatar-popover-title" className="avatar-popover-name">{user?.name || 'User'}</Typography>
-                    <Typography className="avatar-popover-email">{user?.email || ''}</Typography>
-                  </Box>
-                  <Box className="avatar-popover-divider" />
-                  {/* <Box
-                    className="avatar-popover-item"
-                    role="menuitem"
-                    onClick={() => {
-                      setAvatarAnchorEl(null)
-                      onDashboard?.() ?? setActivePage('portal')
-                    }}
-                  >
-                    <Typography>Settings</Typography>
-                  </Box> */}
-                  <Box
-                    className="avatar-popover-item avatar-popover-item-logout"
-                    role="menuitem"
-                    onClick={() => {
-                      setAvatarAnchorEl(null)
-                      logout()
-                    }}
-                  >
-                    <LogoutRoundedIcon fontSize="small" />
-                    <Typography>Logout</Typography>
-                  </Box>
-                </Box>
-              </Popover>
-            </Box>
-          )}
-        </Box>
       </Box>
+      <Box className="navbar-actions">
+        {!isLoggedIn ? (
+          <CommonButton
+            onClick={() => {
+              handleNavClick()
+              onLogin?.()
+            }}
+          >
+            Login
+          </CommonButton>
+        ) : (
+          <CommonButton
+            className="btn btn-primary"
+            onClick={() => {
+              handleNavClick()
+              setAvatarAnchorEl(null)
+              onDashboard?.() ?? setActivePage('portal')
+            }}
+          >
+            Dashboard
+          </CommonButton>
+        )}
+        {!isLoggedIn ? (
+          <CommonButton
+            className="btn btn-primary"
+            onClick={() => {
+              handleNavClick()
+              onBookNow?.()
+            }}
+          >
+            Book Consultation
+          </CommonButton>
+        ) : (
+          <Box className="avatar-menu-wrap">
+            <IconButton
+              className="avatar-btn"
+              aria-label="User Avatar"
+              aria-expanded={isLogoutPopoverOpen}
+              onClick={(event) => setAvatarAnchorEl(avatarAnchorEl ? null : event.currentTarget)}
+            >
+              <Avatar className="avatar" >{avatarInitials || 'US'}</Avatar>
+            </IconButton>
+            <Popover
+              open={isLogoutPopoverOpen}
+              anchorEl={avatarAnchorEl}
+              onClose={() => setAvatarAnchorEl(null)}
+              anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+              transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+              aria-labelledby="avatar-popover-title"
+              PaperProps={{ className: 'avatar-popover-paper' }}
+            >
+              <Box className="avatar-popover-content" role="menu" aria-label="User menu">
+                <Box className="avatar-popover-profile">
+                  <Typography id="avatar-popover-title" className="avatar-popover-name">{user?.name || 'User'}</Typography>
+                  <Typography className="avatar-popover-email">{user?.email || ''}</Typography>
+                </Box>
+                <Box className="avatar-popover-divider" />
+                <Box
+                  className="avatar-popover-item avatar-popover-item-logout"
+                  role="menuitem"
+                  onClick={() => {
+                    handleNavClick()
+                    setAvatarAnchorEl(null)
+                    logout()
+                  }}
+                >
+                  <LogoutRoundedIcon fontSize="small" />
+                  <Typography>Logout</Typography>
+                </Box>
+              </Box>
+            </Popover>
+          </Box>
+        )}
+      </Box>
+      <IconButton
+        className="menu-toggle"
+        aria-label="Toggle navigation menu"
+        aria-expanded={isMenuOpen}
+        onClick={() => setIsMenuOpen((open) => !open)}
+      >
+        {isMenuOpen ? <CloseRoundedIcon fontSize="small" /> : <MenuRoundedIcon fontSize="small" />}
+      </IconButton>
+      </Box>
+    </Box>
     </Box>
   )
 }
