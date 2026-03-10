@@ -3,6 +3,7 @@ from fastapi.responses import JSONResponse
 
 from app.controller.userAuth import LoginUserPayload, login_user
 from app.controller.userAuth import RegisterUserPayload, register_user
+from app.controller.userAuth import ChangePasswordRequest, validate_new_password
 
 
 router = APIRouter()
@@ -90,3 +91,43 @@ async def login_user_request(payload: LoginUserPayload):
         )
 
 
+# chnage password
+@router.post('/change-password')
+async def change_password_request(payload: ChangePasswordRequest):
+    try:
+        result = await validate_new_password(payload)
+        return JSONResponse(
+            status_code=200,
+            content={
+                'status_code': 200,
+                'message': 'Password changed successfully',
+                'data': result,
+            },
+        )
+    except ValueError as exc:
+        return JSONResponse(
+            status_code=400,
+            content={
+                'status_code': 400,
+                'message': str(exc),
+                'data': None,
+            },
+        )
+    except RuntimeError as exc:
+        return JSONResponse(
+            status_code=503,
+            content={
+                'status_code': 503,
+                'message': str(exc),
+                'data': None,
+            },
+        )
+    except Exception as exc:
+        return JSONResponse(
+            status_code=500,
+            content={
+                'status_code': 500,
+                'message': f'Failed to change password: {str(exc)}',
+                'data': None,
+            },
+        )

@@ -372,6 +372,7 @@ function PortalPage({ onBackToHome, brandName }: PortalPageProps) {
             handleConfirmBooking={handleConfirmBooking}
             userName={user?.name || ''}
             userEmail={user?.email || ''}
+            userId={user?.userId || ''}
             isLoadingBookings={isLoadingBookings}
             bookings={bookings}
             formatBookingDate={formatBookingDate}

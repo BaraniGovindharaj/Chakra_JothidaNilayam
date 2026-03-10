@@ -12,6 +12,7 @@ from app.routes import message
 from app.routes import userAuth
 
 
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 

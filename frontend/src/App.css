@@ -132,6 +132,62 @@ h6,
   height: 2.4rem;
 }
 
+.avatar-popover-paper {
+  margin-top: 0.45rem;
+  min-width: 270px;
+  border: none;
+  background: #1a0738;
+  border-radius: var(--radius-md);
+  color: #ffffff;
+  box-shadow: var(--shadow-soft);
+  overflow: hidden;
+}
+
+.avatar-popover-content {
+  display: flex;
+  flex-direction: column;
+   background: #1a0738;
+   border: none;
+}
+
+.avatar-popover-profile {
+  padding: 1rem;
+}
+
+.avatar-popover-name {
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-semibold);
+  color: #ffffff;
+}
+
+.avatar-popover-email {
+  margin-top: 0.2rem;
+  color: #ffffff;
+  font-size: var(--font-size-sm);
+}
+
+.avatar-popover-divider {
+  height: 1px;
+  background: var(--color-border);
+}
+
+.avatar-popover-item {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.85rem 1rem;
+  cursor: pointer;
+  color: #ffffff;
+}
+
+.avatar-popover-item:hover {
+  background: rgba(208, 182, 244, 0.15);
+}
+
+.avatar-popover-item-logout {
+  color: #ffffff;
+}
+
 .avatar-dropdown {
   position: absolute;
   top: calc(100% + 0.45rem);
@@ -1002,7 +1058,18 @@ h6,
 }
 
 .portal-book-section {
-  max-height: 72vh;
+  max-height: none;
+  overflow-y: visible;
+}
+
+.portal-profile-section {
+  max-height: none;
+  overflow-y: visible;
+}
+
+.portal-book-scroll,
+.portal-profile-scroll {
+  max-height: 55vh;
   overflow-y: auto;
   overscroll-behavior: contain;
   scrollbar-gutter: stable;
@@ -1294,24 +1361,82 @@ h6,
 
 .portal-profile-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.75rem;
+  grid-template-columns: 1fr;
+  gap: 0.95rem;
+  max-width: 980px;
 }
 
 .portal-profile-grid label {
   display: flex;
   flex-direction: column;
-  gap: 0.4rem;
+  gap: 0.5rem;
   font-size: var(--font-size-sm);
-  color: var(--color-text-muted);
+  color: #ffffff;
 }
 
-.portal-profile-grid input {
-  border-radius: var(--radius-md);
-  border: 1px solid var(--color-border);
-  background: #15052f;
-  color: var(--color-text-primary);
-  padding: 0.7rem;
+.portal-profile-input .MuiOutlinedInput-root {
+  /* min-height: 66px; */
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.02) !important;
+}
+
+.portal-profile-grid .MuiInputBase-root,
+.portal-profile-grid .MuiOutlinedInput-root,
+.portal-profile-grid .MuiInputBase-root.Mui-disabled,
+.portal-profile-grid .MuiOutlinedInput-root.Mui-disabled {
+  background: rgba(255, 255, 255, 0.02) !important;
+  color: #ffffff !important;
+}
+
+.portal-profile-grid .MuiOutlinedInput-notchedOutline {
+  border-color: rgba(201, 191, 225, 0.62) !important;
+}
+
+.portal-profile-grid .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline,
+.portal-profile-grid .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline,
+.portal-profile-grid .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline {
+  border-color: rgba(201, 191, 225, 0.62) !important;
+}
+
+.portal-profile-grid .MuiInputBase-input,
+.portal-profile-grid .MuiInputBase-input.Mui-disabled,
+.portal-profile-grid .MuiOutlinedInput-input,
+.portal-profile-grid .MuiOutlinedInput-input.Mui-disabled {
+  background: transparent !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  font-size: 1.06rem;
+  padding: 1rem 1.05rem;
+  opacity: 1 !important;
+}
+
+.portal-profile-grid .MuiInputBase-input::placeholder {
+  color: #ffffff;
+  opacity: 0.92;
+}
+
+.portal-profile-grid .MuiInputAdornment-root .MuiIconButton-root,
+.portal-profile-grid .MuiInputAdornment-root .MuiSvgIcon-root {
+  color: #ffffff !important;
+}
+
+.portal-profile-grid .MuiInputAdornment-root {
+  margin-right: 0.15rem;
+}
+
+.portal-profile-grid input:-webkit-autofill,
+.portal-profile-grid input:-webkit-autofill:hover,
+.portal-profile-grid input:-webkit-autofill:focus,
+.portal-profile-grid input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px rgba(255, 255, 255, 0.02) inset !important;
+  -webkit-text-fill-color: #ffffff !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+.portal-password-btn {
+  margin-top: 0.25rem;
+  width: 280px;
+  max-width: 100%;
 }
 
 @media (max-width: 900px) {
@@ -1327,8 +1452,9 @@ h6,
     max-height: 48vh;
   }
 
-  .portal-book-section {
-    max-height: 65vh;
+  .portal-book-scroll,
+  .portal-profile-scroll {
+    max-height: 48vh;
   }
 }
 
@@ -1352,8 +1478,9 @@ h6,
     padding-right: 0.1rem;
   }
 
-  .portal-book-section {
-    max-height: 58vh;
+  .portal-book-scroll,
+  .portal-profile-scroll {
+    max-height: 42vh;
   }
 
   .portal-header-row {
