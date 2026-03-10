@@ -43,11 +43,24 @@ export type HomeContent = {
   contactSection: {
     title: string
     description: string
-    officeHours: {
-      weekdays: string
-      weekend: string
+    office_hours?: {
+      monday_to_friday: {
+        start_time: string
+        end_time: string
+        timezone: string
+      }
+      saturday: {
+        start_time: string
+        end_time: string
+        timezone: string
+      }
+    }
+    unavailable_month_dates?: {
+      month_start?: string
+      month_end?: string
     }
     location: string
+    contact_method?: string
     formFields: string[]
     submitButton: string
   }
@@ -80,6 +93,16 @@ export type ServiceOption = {
   title: string
   duration: string
   amount: number
+}
+
+export type ToastOptions = {
+    position: "top-right";
+    autoClose: number;
+    hideProgressBar: boolean;
+    closeOnClick: boolean;
+    pauseOnHover: boolean;
+    draggable: boolean;
+  progress?: number;
 }
 
 

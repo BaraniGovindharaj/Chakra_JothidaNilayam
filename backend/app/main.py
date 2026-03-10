@@ -10,6 +10,8 @@ from app.routes import booking
 from app.routes import astroIntro
 from app.routes import message
 from app.routes import userAuth
+from app.routes.userAuth import ChangePasswordRequest, validate_new_password
+
 
 
 logging.basicConfig(level=logging.INFO)

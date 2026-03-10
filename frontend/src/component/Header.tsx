@@ -3,7 +3,7 @@ import AutoAwesomeOutlinedIcon from '@mui/icons-material/AutoAwesomeOutlined'
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded'
 import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded'
 import MenuRoundedIcon from '@mui/icons-material/MenuRounded'
-import { Box, IconButton, Link, Typography } from '@mui/material'
+import { Avatar, Box, IconButton, Link, Popover, Typography } from '@mui/material'
 import CommonButton from './ReusableButton/CommonButton'
 import { useUser } from '../context/userProvider'
 
@@ -13,11 +13,13 @@ type Props = {
   onBookNow?: () => void
   onLogin?: () => void
   onHome?: () => void
+  onSectionNavigate?: (section: string) => void
+  onDashboard?: () => void
 }
 
-function Header({ brandName, navigation, onBookNow, onLogin, onHome }: Props) {
+function Header({ brandName, navigation, onBookNow, onLogin, onHome, onSectionNavigate, onDashboard }: Props) {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [isAvatarMenuOpen, setIsAvatarMenuOpen] = useState(false)
+  const [avatarAnchorEl, setAvatarAnchorEl] = useState<HTMLElement | null>(null)
   const navItems = navigation?.length ? navigation : ['Home', 'Services', 'About', 'Contact']
   const { isLoggedIn, user, setActivePage, logout } = useUser()
   const avatarInitials = (user?.name || '')
@@ -28,24 +30,26 @@ function Header({ brandName, navigation, onBookNow, onLogin, onHome }: Props) {
     .map((part) => part[0]?.toUpperCase() || '')
     .join('')
 
-  console.log('Header - isLoggedIn:', isLoggedIn)
-
   const handleNavClick = () => {
     setIsMenuOpen(false)
-    setIsAvatarMenuOpen(false)
+    setAvatarAnchorEl(null)
   }
+
+  const isLogoutPopoverOpen = Boolean(avatarAnchorEl)
 
   const handleSectionNavigation = (item: string, event: React.MouseEvent<HTMLAnchorElement>) => {
     event.preventDefault()
     handleNavClick()
 
     if (item.toLowerCase() === 'home') {
+      onSectionNavigate?.('')
       onHome?.()
       window.scrollTo({ top: 0, behavior: 'smooth' })
       return
     }
 
     const targetId = item.toLowerCase().replace(/\s+/g, '')
+    onSectionNavigate?.(targetId)
     const target = document.getElementById(targetId)
     if (target) {
       target.scrollIntoView({ behavior: 'smooth', block: 'start' })
@@ -54,7 +58,11 @@ function Header({ brandName, navigation, onBookNow, onLogin, onHome }: Props) {
 
   return (
     <Box component="header" className="navbar section">
-      <Box className="logo">
+      <Box className="logo" onClick={() => {
+        onSectionNavigate?.('')
+        onHome?.()
+        window.scrollTo({ top: 0, behavior: 'smooth' })
+      }}>
         <AutoAwesomeOutlinedIcon className="logo-icon" fontSize="small" />
         <Typography component="span">{brandName || 'Sri Chakra Jothidanilayam'}</Typography>
       </Box>
@@ -95,8 +103,8 @@ function Header({ brandName, navigation, onBookNow, onLogin, onHome }: Props) {
             <CommonButton
               className="btn btn-primary"
               onClick={() => {
-                setIsAvatarMenuOpen(false)
-                setActivePage('portal')
+                setAvatarAnchorEl(null)
+                onDashboard?.() ?? setActivePage('portal')
               }}
             >
               Dashboard
@@ -114,29 +122,52 @@ function Header({ brandName, navigation, onBookNow, onLogin, onHome }: Props) {
             </CommonButton>
           ) : (
             <Box className="avatar-menu-wrap">
-              <CommonButton
-                className="avatar avatar-btn"
+              <IconButton
+                className="avatar-btn"
                 aria-label="User Avatar"
-                aria-expanded={isAvatarMenuOpen}
-                onClick={() => setIsAvatarMenuOpen((open) => !open)}
+                aria-expanded={isLogoutPopoverOpen}
+                onClick={(event) => setAvatarAnchorEl(avatarAnchorEl ? null : event.currentTarget)}
               >
-                {avatarInitials || 'US'}
-              </CommonButton>
-              {isAvatarMenuOpen && (
-                <Box className="avatar-dropdown" role="menu" aria-label="User menu">
-                  <CommonButton
-                    className="avatar-dropdown-item logout-action"
+                <Avatar className="avatar" >{avatarInitials || 'US'}</Avatar>
+              </IconButton>
+              <Popover
+                open={isLogoutPopoverOpen}
+                anchorEl={avatarAnchorEl}
+                onClose={() => setAvatarAnchorEl(null)}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+                aria-labelledby="avatar-popover-title"
+                PaperProps={{ className: 'avatar-popover-paper' }}
+              >
+                <Box className="avatar-popover-content" role="menu" aria-label="User menu">
+                  <Box className="avatar-popover-profile">
+                    <Typography id="avatar-popover-title" className="avatar-popover-name">{user?.name || 'User'}</Typography>
+                    <Typography className="avatar-popover-email">{user?.email || ''}</Typography>
+                  </Box>
+                  <Box className="avatar-popover-divider" />
+                  {/* <Box
+                    className="avatar-popover-item"
                     role="menuitem"
                     onClick={() => {
-                      setIsAvatarMenuOpen(false)
+                      setAvatarAnchorEl(null)
+                      onDashboard?.() ?? setActivePage('portal')
+                    }}
+                  >
+                    <Typography>Settings</Typography>
+                  </Box> */}
+                  <Box
+                    className="avatar-popover-item avatar-popover-item-logout"
+                    role="menuitem"
+                    onClick={() => {
+                      setAvatarAnchorEl(null)
                       logout()
                     }}
                   >
                     <LogoutRoundedIcon fontSize="small" />
-                    Logout
-                  </CommonButton>
+                    <Typography>Logout</Typography>
+                  </Box>
                 </Box>
-              )}
+              </Popover>
             </Box>
           )}
         </Box>

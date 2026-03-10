@@ -3,8 +3,10 @@ import hashlib
 import os
 import secrets
 from uuid import uuid4
+import re
 
 import jwt
+from bson import ObjectId
 from pydantic import BaseModel, EmailStr, field_validator
 
 from app.config.mongodb import db_state
@@ -185,3 +187,86 @@ async def login_user(payload: LoginUserPayload):
         'email': normalized_email,
         'isVerified': user.get('isVerified', False),
     }
+
+# change Password api
+
+class ChangePasswordRequest(BaseModel):
+    user_id: str
+    current_password: str
+    new_password: str
+
+    @field_validator('user_id')
+    @classmethod
+    def validate_user_id(cls, value: str) -> str:
+        normalized = value.strip()
+        if not normalized:
+            raise ValueError('User id is required')
+        return normalized
+
+    @field_validator('current_password')
+    @classmethod
+    def validate_current_password(cls, value: str) -> str:
+        normalized = value.strip()
+        if not normalized:
+            raise ValueError('Current password is required')
+        return normalized
+
+    @field_validator('new_password')
+    @classmethod
+    def validate_new_password(cls, value: str) -> str:
+        password = value.strip()
+
+        if len(password) < 8:
+            raise ValueError("Password must be at least 8 characters")
+
+        if not re.search(r"[A-Z]", password):
+            raise ValueError("Password must contain at least one uppercase letter")
+
+        if not re.search(r"[0-9]", password):
+            raise ValueError("Password must contain at least one number")
+
+        if not re.search(r"[!@#$%^&*(),.?\":{}|<>]", password):
+            raise ValueError("Password must contain at least one special character")
+
+        return password
+
+
+async def validate_new_password(payload: ChangePasswordRequest):
+    if db_state.db is None:
+        raise RuntimeError('Database is not connected')
+
+    try:
+        user_object_id = ObjectId(payload.user_id)
+    except Exception as exc:
+        raise ValueError('Invalid user id') from exc
+
+    user = await db_state.db.Users.find_one(
+        {'_id': user_object_id, 'passwordHash': {'$exists': True}, 'passwordSalt': {'$exists': True}}
+    )
+    if not user:
+        raise ValueError('User not found')
+
+    current_hash = _hash_password(payload.current_password, user['passwordSalt'])
+    if current_hash != user['passwordHash']:
+        raise ValueError('Current password is incorrect')
+
+    if payload.current_password == payload.new_password:
+        raise ValueError('New password must be different from current password')
+
+    password_salt = secrets.token_hex(16)
+    password_hash = _hash_password(payload.new_password, password_salt)
+
+    await db_state.db.Users.update_one(
+        {'_id': user_object_id},
+        {
+            '$set': {
+                'passwordHash': password_hash,
+                'passwordSalt': password_salt,
+                'passwordUpdatedAt': datetime.now(timezone.utc).isoformat(),
+            }
+        },
+    )
+
+    return {'userId': payload.user_id}
+
+
