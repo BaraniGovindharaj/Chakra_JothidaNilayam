@@ -1,8 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Public+Sans:wght@400;500;600;700&display=swap');
 
 :root {
-  --font-family-body: 'Public Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --font-family-heading: 'Cormorant Garamond', Georgia, serif;
+  --font-family-body: 'Public Sans';
+  --font-family-heading: 'Public Sans';
 
   --font-size-xs: 0.78rem;
   --font-size-sm: 0.95rem;
@@ -24,6 +24,7 @@
   --color-border: rgba(170, 144, 207, 0.28);
   --color-secondary: transparent;
   --color-black: #000000;
+  --color-green: #064e06e4;
 
   --radius-md: 10px;
   --radius-lg: 14px;

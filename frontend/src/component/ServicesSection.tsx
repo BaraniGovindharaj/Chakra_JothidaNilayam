@@ -1,6 +1,8 @@
 import type { HomeContent } from './types'
 import ArrowForwardRoundedIcon from '@mui/icons-material/ArrowForwardRounded'
 import NightlightRoundOutlinedIcon from '@mui/icons-material/NightlightRoundOutlined'
+import { Box, Typography } from '@mui/material'
+import CommonButton from './ReusableButton/CommonButton'
 
 type Props = {
   content: HomeContent | null
@@ -13,28 +15,28 @@ function ServicesSection({ content, onBookNow }: Props) {
   const items = content.servicesSection?.services ?? []
 
   return (
-    <section id="services" className="section services">
-      <p className="section-kicker">OUR OFFERINGS</p>
-      <h2>{content.servicesSection?.title ?? 'Divine Services'}</h2>
-      <div className="cards-grid">
+    <Box component="section" id="services" className="section services">
+      <Typography component="p" className="section-kicker">OUR OFFERINGS</Typography>
+      <Typography component="h2" variant="h2">{content.servicesSection?.title ?? 'Divine Services'}</Typography>
+      <Box className="cards-grid">
         {items.map((item, index) => (
-          <article className="service-card" key={`${item.title}-${index}`}>
-            <div className="service-icon" aria-hidden="true">
+          <Box component="article" className="service-card" key={`${item.title}-${index}`}>
+            <Box className="service-icon" aria-hidden="true">
               <NightlightRoundOutlinedIcon fontSize="small" />
-            </div>
-            <h3>{item.title}</h3>
-            <p>{item.description}</p>
-            <div className="service-footer">
-              <strong>{item.price}</strong>
-              <button onClick={onBookNow}>
-                <span>{item.cta}</span>
+            </Box>
+            <Typography component="h3" variant="h3">{item.title}</Typography>
+            <Typography component="p">{item.description}</Typography>
+            <Box className="service-footer">
+              <Typography component="strong">{item.price}</Typography>
+              <CommonButton onClick={onBookNow}>
+                {item.cta}
                 <ArrowForwardRoundedIcon fontSize="small" />
-              </button>
-            </div>
-          </article>
+              </CommonButton>
+            </Box>
+          </Box>
         ))}
-      </div>
-    </section>
+      </Box>
+    </Box>
   )
 }
 

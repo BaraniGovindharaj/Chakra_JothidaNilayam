@@ -3,6 +3,8 @@ import AutoAwesomeOutlinedIcon from '@mui/icons-material/AutoAwesomeOutlined'
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded'
 import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded'
 import MenuRoundedIcon from '@mui/icons-material/MenuRounded'
+import { Box, IconButton, Link, Typography } from '@mui/material'
+import CommonButton from './ReusableButton/CommonButton'
 import { useUser } from '../context/userProvider'
 
 type Props = {
@@ -51,46 +53,46 @@ function Header({ brandName, navigation, onBookNow, onLogin, onHome }: Props) {
   }
 
   return (
-    <header className="navbar section">
-      <div className="logo">
+    <Box component="header" className="navbar section">
+      <Box className="logo">
         <AutoAwesomeOutlinedIcon className="logo-icon" fontSize="small" />
-        {brandName || 'Sri Chakra Jothidanilayam'}
-      </div>
-      <button
+        <Typography component="span">{brandName || 'Sri Chakra Jothidanilayam'}</Typography>
+      </Box>
+      <IconButton
         className="menu-toggle"
-        type="button"
         aria-label="Toggle navigation menu"
         aria-expanded={isMenuOpen}
         onClick={() => setIsMenuOpen((open) => !open)}
       >
         {isMenuOpen ? <CloseRoundedIcon fontSize="small" /> : <MenuRoundedIcon fontSize="small" />}
-      </button>
-      <div className={`navbar-content ${isMenuOpen ? 'is-open' : ''}`}>
-        <nav>
+      </IconButton>
+      <Box className={`navbar-content ${isMenuOpen ? 'is-open' : ''}`}>
+        <Box component="nav">
           {navItems.map((item) => (
-            <a
+            <Link
               key={item}
               href={`#${item.toLowerCase().replace(/\s+/g, '')}`}
               onClick={(event) => handleSectionNavigation(item, event)}
               className="nav-link"
+              underline="none"
             >
               {item}
-            </a>
+            </Link>
           ))}
-        </nav>
-        <div className="navbar-actions">
+        </Box>
+        <Box className="navbar-actions">
           {!isLoggedIn ? (
-            <button
-              className="btn btn-secondary"
+            <CommonButton
+              // className="btn btn-secondary"
               onClick={() => {
                 handleNavClick()
                 onLogin?.()
               }}
             >
               Login
-            </button>
+            </CommonButton>
           ) : (
-            <button
+            <CommonButton
               className="btn btn-primary"
               onClick={() => {
                 setIsAvatarMenuOpen(false)
@@ -98,10 +100,10 @@ function Header({ brandName, navigation, onBookNow, onLogin, onHome }: Props) {
               }}
             >
               Dashboard
-            </button>
+            </CommonButton>
           )}
           {!isLoggedIn ? (
-            <button
+            <CommonButton
               className="btn btn-primary"
               onClick={() => {
                 handleNavClick()
@@ -109,22 +111,20 @@ function Header({ brandName, navigation, onBookNow, onLogin, onHome }: Props) {
               }}
             >
               Book Consultation
-            </button>
+            </CommonButton>
           ) : (
-            <div className="avatar-menu-wrap">
-              <button
-                type="button"
+            <Box className="avatar-menu-wrap">
+              <CommonButton
                 className="avatar avatar-btn"
                 aria-label="User Avatar"
                 aria-expanded={isAvatarMenuOpen}
                 onClick={() => setIsAvatarMenuOpen((open) => !open)}
               >
-                <span aria-hidden="true">{avatarInitials || 'US'}</span>
-              </button>
+                {avatarInitials || 'US'}
+              </CommonButton>
               {isAvatarMenuOpen && (
-                <div className="avatar-dropdown" role="menu" aria-label="User menu">
-                  <button
-                    type="button"
+                <Box className="avatar-dropdown" role="menu" aria-label="User menu">
+                  <CommonButton
                     className="avatar-dropdown-item logout-action"
                     role="menuitem"
                     onClick={() => {
@@ -133,15 +133,15 @@ function Header({ brandName, navigation, onBookNow, onLogin, onHome }: Props) {
                     }}
                   >
                     <LogoutRoundedIcon fontSize="small" />
-                    <span>Logout</span>
-                  </button>
-                </div>
+                    Logout
+                  </CommonButton>
+                </Box>
               )}
-            </div>
+            </Box>
           )}
-        </div>
-      </div>
-    </header>
+        </Box>
+      </Box>
+    </Box>
   )
 }
 
