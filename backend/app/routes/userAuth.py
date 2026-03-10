@@ -1,0 +1,92 @@
+from fastapi import APIRouter
+from fastapi.responses import JSONResponse
+
+from app.controller.userAuth import LoginUserPayload, login_user
+from app.controller.userAuth import RegisterUserPayload, register_user
+
+
+router = APIRouter()
+
+
+@router.post('/register')
+async def register_user_request(payload: RegisterUserPayload):
+    try:
+        user = await register_user(payload)
+        return JSONResponse(
+            status_code=201,
+            content={
+                'status_code': 201,
+                'message': 'User registered successfully',
+                'data': user,
+            },
+        )
+    except ValueError as exc:
+        return JSONResponse(
+            status_code=400,
+            content={
+                'status_code': 400,
+                'message': str(exc),
+                'data': None,
+            },
+        )
+    except RuntimeError as exc:
+        return JSONResponse(
+            status_code=503,
+            content={
+                'status_code': 503,
+                'message': str(exc),
+                'data': None,
+            },
+        )
+    except Exception as exc:
+        return JSONResponse(
+            status_code=500,
+            content={
+                'status_code': 500,
+                'message': f'Failed to register user: {str(exc)}',
+                'data': None,
+            },
+        )
+
+
+@router.post('/login')
+async def login_user_request(payload: LoginUserPayload):
+    try:
+        user = await login_user(payload)
+        return JSONResponse(
+            status_code=200,
+            content={
+                'status_code': 200,
+                'message': 'User logged in successfully',
+                'data': user,
+            },
+        )
+    except ValueError as exc:
+        return JSONResponse(
+            status_code=401,
+            content={
+                'status_code': 401,
+                'message': str(exc),
+                'data': None,
+            },
+        )
+    except RuntimeError as exc:
+        return JSONResponse(
+            status_code=503,
+            content={
+                'status_code': 503,
+                'message': str(exc),
+                'data': None,
+            },
+        )
+    except Exception as exc:
+        return JSONResponse(
+            status_code=500,
+            content={
+                'status_code': 500,
+                'message': f'Failed to login user: {str(exc)}',
+                'data': None,
+            },
+        )
+
+

@@ -1,0 +1,8 @@
+# rquirements file
+fastapi
+uvicorn
+motor
+pydantic-settings
+python-dotenv
+email-validator
+PyJWT
