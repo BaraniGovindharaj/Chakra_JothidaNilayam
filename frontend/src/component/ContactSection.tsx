@@ -4,6 +4,7 @@ import CommonButton from './ReusableButton/CommonButton'
 import { apiPost } from '../services/apiHandler'
 import type { HomeContent } from './types'
 import { useUser } from '../context/userProvider'
+import showToast from './Toast/Toast'
 
 type Props = {
   content: HomeContent | null
@@ -24,6 +25,21 @@ function ContactSection({ content }: Props) {
 
   const contact = content.contactSection
   const fields = contact?.formFields ?? ['User Name', 'Phone Number', 'Message']
+  const mondayToFriday = contact?.office_hours?.monday_to_friday
+  const saturday = contact?.office_hours?.saturday
+  const unavailableDates = contact?.unavailable_month_dates
+
+  const availableDatesLabel = mondayToFriday
+    ? `Monday to Friday: ${mondayToFriday.start_time} - ${mondayToFriday.end_time} (${mondayToFriday.timezone})`
+    : 'Monday to Friday: Not available'
+
+  const saturdayLabel = saturday
+    ? `Saturday: ${saturday.start_time} - ${saturday.end_time} (${saturday.timezone})`
+    : ''
+
+  const unavailableDatesLabel = unavailableDates?.month_start && unavailableDates?.month_end
+    ? `${unavailableDates.month_start}, ${unavailableDates.month_end}`
+    : 'Not specified'
 
   const handleChange = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -36,24 +52,23 @@ function ContactSection({ content }: Props) {
     event.preventDefault()
 
     if (!userId) {
-      alert('Please login to send a message.')
+      showToast('Please login to send a message.', 'warning')
       setActivePage('login')
       return
     }
 
     if (!formData.userName.trim() || !formData.phoneNumber.trim() || !formData.message.trim()) {
-      alert('Please fill user name, phone number, and message.')
+      showToast('Please fill user name, phone number, and message.', 'warning')
       return
     }
 
     try {
-      await apiPost('/api/v1/contact-message', formData)
-      alert('Message sent successfully!')
+      const response: any = await apiPost('/api/v1/contact-message', formData)
+      showToast(response?.message, 'success')
       setFormData({ userName: '', phoneNumber: '', email: '', message: '', userId: userId || undefined })
-    } catch (error) {
-      console.error('Error saving contact message:', error)
+    } catch (error: any) {
       setActivePage('login')
-      alert('Failed to send message. Please try again.')
+      showToast(error?.message, 'error')
     }
   }
 
@@ -65,9 +80,11 @@ function ContactSection({ content }: Props) {
         <Typography component="p">{contact?.description}</Typography>
         <Box className="contact-card">
           <Typography component="h4" variant="h4" className='contact-title'>Office Hours</Typography>
-          <Typography component="p">{contact?.officeHours?.weekdays}</Typography>
-          <Typography component="p">{contact?.officeHours?.weekend}</Typography>
-          <Typography component="p">{contact?.location}</Typography>
+          <Typography component="p">Available dates: {availableDatesLabel}</Typography>
+          {saturdayLabel ? <Typography component="p">{saturdayLabel}</Typography> : null}
+          <Typography component="p">Unavailable monthly dates: {unavailableDatesLabel}</Typography>
+          <Typography component="p">Location: {contact?.location || 'Not specified'}</Typography>
+          <Typography component="p">Contact method: {contact?.contact_method || 'Phone'}</Typography>
         </Box>
       </Box>
       <Box component="form" className="contact-form" onSubmit={handleSubmit}>
