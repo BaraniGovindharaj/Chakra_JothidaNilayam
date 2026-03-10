@@ -1,12 +1,13 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import AddCircleOutlineRoundedIcon from '@mui/icons-material/AddCircleOutlineRounded'
-import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined'
-import ChevronLeftRoundedIcon from '@mui/icons-material/ChevronLeftRounded'
-import ChevronRightRoundedIcon from '@mui/icons-material/ChevronRightRounded'
 import EventNoteOutlinedIcon from '@mui/icons-material/EventNoteOutlined'
 import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded'
 import PersonOutlineRoundedIcon from '@mui/icons-material/PersonOutlineRounded'
+import { Box, Tab, Tabs, Typography } from '@mui/material'
+import CommonButton from './ReusableButton/CommonButton'
 import Header from './Header'
+import PortalContent from './Portal/PortalContent'
+import type { BookingRecord, PortalView, ServiceOption } from './types'
 import { apiGet, apiPost } from '../services/apiHandler'
 import { useUser } from '../context/userProvider'
 
@@ -15,27 +16,12 @@ type PortalPageProps = {
   brandName?: string
 }
 
-type PortalView = 'bookings' | 'book' | 'profile'
-
-type BookingRecord = {
-  _id: string
-  service: string
-  date: string
-  time: string
-  amount?: number | string
-}
-
 type ApiResponse<T> = {
   status_code: number
   message: string
   data: T
 }
 
-type ServiceOption = {
-  title: string
-  duration: string
-  amount: number
-}
 
 type ServiceDetailsEntry = {
   title?: string
@@ -49,6 +35,20 @@ type ServiceDetailsDocument = {
   servicesSection?: {
     services?: ServiceDetailsEntry[]
   }
+  services?: ServiceDetailsEntry[]
+}
+
+const extractServiceEntries = (documents: ServiceDetailsDocument[] | ServiceDetailsDocument | null | undefined) => {
+  const source = Array.isArray(documents) ? documents : documents ? [documents] : []
+
+  for (const doc of source) {
+    const entries = doc?.servicesSection?.services ?? doc?.services
+    if (Array.isArray(entries) && entries.length > 0) {
+      return entries
+    }
+  }
+
+  return [] as ServiceDetailsEntry[]
 }
 
 const unwrapApiData = <T,>(response: T | ApiResponse<T>): T => {
@@ -125,7 +125,13 @@ function PortalPage({ onBackToHome, brandName }: PortalPageProps) {
     try {
       const response = await apiGet<ServiceDetailsDocument[] | ApiResponse<ServiceDetailsDocument[]>>('/api/v1/service-details')
       const serviceDocuments = unwrapApiData<ServiceDetailsDocument[]>(response)
-      const rawServices = serviceDocuments?.[0]?.servicesSection?.services
+      let rawServices = extractServiceEntries(serviceDocuments)
+
+      if (rawServices.length === 0) {
+        const fallbackResponse = await apiGet<ServiceDetailsDocument[] | ApiResponse<ServiceDetailsDocument[]>>('/api/v1/home-content')
+        const fallbackDocuments = unwrapApiData<ServiceDetailsDocument[]>(fallbackResponse)
+        rawServices = extractServiceEntries(fallbackDocuments)
+      }
 
       const serviceItems: ServiceOption[] = Array.isArray(rawServices)
         ? rawServices.map((item) => {
@@ -262,225 +268,89 @@ function PortalPage({ onBackToHome, brandName }: PortalPageProps) {
     return value
   }
 
-  const renderContent = () => {
-    if (activeView === 'book') {
-      return (
-        <section className="portal-content-card">
-          <h1>Book a New Session</h1>
-
-          <div className="booking-layout">
-            <div className="booking-column">
-              <h3>1. Select a Service</h3>
-              {isLoadingServices && <p className="portal-empty">Loading services...</p>}
-              {!isLoadingServices && serviceOptions.length === 0 && (
-                <p className="portal-empty">No services available right now.</p>
-              )}
-              <div className="booking-service-list">
-                {serviceOptions.map((service, index) => (
-                  <button
-                    type="button"
-                    key={service.title}
-                    className={`booking-service-card ${index === selectedServiceIndex ? 'is-active' : ''}`}
-                    onClick={() => setSelectedServiceIndex(index)}
-                  >
-                    <div>
-                      <h4>{service.title}</h4>
-                      <p>{service.duration}</p>
-                    </div>
-                    <strong>${service.amount}</strong>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div className="booking-column">
-              <h3>2. Select Date & Time</h3>
-              <div className="booking-calendar">
-                <div className="booking-calendar-head">
-                  <h4>{monthLabel}</h4>
-                  <div>
-                    <button type="button" aria-label="Previous month" onClick={() => changeMonth(-1)}>
-                      <ChevronLeftRoundedIcon fontSize="small" />
-                    </button>
-                    <button type="button" aria-label="Next month" onClick={() => changeMonth(1)}>
-                      <ChevronRightRoundedIcon fontSize="small" />
-                    </button>
-                  </div>
-                </div>
-
-                <div className="booking-weekdays">
-                  {weekDays.map((day) => (
-                    <span key={day}>{day}</span>
-                  ))}
-                </div>
-
-                <div className="booking-days">
-                  {calendarDates.map((day, index) => (
-                    <button
-                      type="button"
-                      key={`${day}-${index}`}
-                      className={day === selectedDay ? 'is-selected' : ''}
-                      onClick={() => {
-                        if (day) {
-                          setSelectedDay(day)
-                        }
-                      }}
-                      disabled={!day}
-                    >
-                      {day ?? ''}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div className="booking-times">
-                {timeSlots.map((time, index) => (
-                  <button
-                    key={time}
-                    type="button"
-                    className={index === selectedTimeIndex ? 'is-selected' : ''}
-                    onClick={() => setSelectedTimeIndex(index)}
-                  >
-                    {time}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          <div className="booking-footer">
-            <button
-              className="btn btn-primary"
-              type="button"
-              onClick={handleConfirmBooking}
-              disabled={selectedServiceIndex === null || selectedTimeIndex === null || selectedDay === null}
-            >
-              Confirm Booking
-            </button>
-          </div>
-        </section>
-      )
-    }
-
-    if (activeView === 'profile') {
-      return (
-        <section className="portal-content-card">
-          <h1>Profile Settings</h1>
-          <div className="portal-profile-grid">
-            <label>
-              Name
-              <input type="text" defaultValue={user?.name || ''} />
-            </label>
-            <label>
-              Email
-              <input type="email" defaultValue={user?.email || ''} />
-            </label>
-            {/* <label>
-              Phone
-              <input type="tel" defaultValue={user?.phone || ''} />
-            </label>
-            <label>
-              Time Zone
-              <input type="text" defaultValue={user?.timeZone || ''} />
-            </label> */}
-          </div>
-        </section>
-      )
-    }
-
-    return (
-      <section className="portal-content-card">
-        <h1>Your Appointments</h1>
-
-        {isLoadingBookings && <p className="portal-empty">Loading bookings...</p>}
-
-        {!isLoadingBookings && bookings.length === 0 && (
-          <p className="portal-empty">No bookings found. Click Book New Reading to create one.</p>
-        )}
-
-        {!isLoadingBookings && bookings.length > 0 && (
-          <div className="portal-booking-list">
-            {bookings.map((booking) => {
-              const appointmentDate = new Date(booking.date)
-              const status = appointmentDate.getTime() >= Date.now() ? 'Upcoming' : 'Completed'
-
-              return (
-                <article className="portal-booking-item" key={booking._id}>
-                  <div className="portal-booking-icon" aria-hidden="true">
-                    <CalendarMonthOutlinedIcon fontSize="small" />
-                  </div>
-                  <div className="portal-booking-main">
-                    <h3>{booking.service}</h3>
-                    <p>
-                      {formatBookingDate(booking.date)} at {formatBookingTime(booking.time)} UTC
-                    </p>
-                  </div>
-                  <span className={`portal-status-badge ${status === 'Upcoming' ? 'is-upcoming' : 'is-completed'}`}>
-                    {status}
-                  </span>
-                </article>
-              )
-            })}
-          </div>
-        )}
-      </section>
-    )
-  }
-
   return (
-    <div className="portal-page-wrap">
+    <Box className="portal-page-wrap">
       <Header
         brandName={brandName}
         onHome={onBackToHome}
         onBookNow={() => setActiveView('book')}
       />
 
-      <main className="section portal-main-layout">
-        <aside className="portal-sidebar">
-          <div className="portal-user-block">
-            <div className="portal-avatar">{user?.name ? user.name.split(' ').map(n => n[0]).join('') : 'US'}</div>
-            <div>
-              <h4>{user?.name || 'User'}</h4>
-              <p>Premium Member</p>
-            </div>
-          </div>
+      <Box component="main" className="section portal-main-layout">
+        <Box component="aside" className="portal-sidebar">
+          <Box>
+          <Box className="portal-user-block">
+            <Box className="portal-avatar">{user?.name ? user.name.split(' ').map(n => n[0]).join('') : 'US'}</Box>
+            <Box>
+              <Typography component="h4" variant="h4">{user?.name || 'User'}</Typography>
+              <Typography component="p">Premium Member</Typography>
+            </Box>
+          </Box>
 
-          <div className="portal-menu">
-            <button
-              type="button"
+          <Tabs
+            className="portal-menu"
+            orientation="vertical"
+            value={activeView}
+            onChange={(_, value: PortalView) => setActiveView(value)}
+            aria-label="Portal navigation"
+          >
+            <Tab
+              value="bookings"
+              label="My Bookings"
+              icon={<EventNoteOutlinedIcon fontSize="small" />}
+              iconPosition="start"
               className={activeView === 'bookings' ? 'is-active' : ''}
-              onClick={() => setActiveView('bookings')}
-            >
-              <EventNoteOutlinedIcon fontSize="small" />
-              <span>My Bookings</span>
-            </button>
-            <button
-              type="button"
+            />
+            <Tab
+              value="book"
+              label="Book New Reading"
+              icon={<AddCircleOutlineRoundedIcon fontSize="small" />}
+              iconPosition="start"
               className={activeView === 'book' ? 'is-active' : ''}
-              onClick={() => setActiveView('book')}
-            >
-              <AddCircleOutlineRoundedIcon fontSize="small" />
-              <span>Book New Reading</span>
-            </button>
-            <button
-              type="button"
+            />
+            <Tab
+              value="profile"
+              label="Profile Settings"
+              icon={<PersonOutlineRoundedIcon fontSize="small" />}
+              iconPosition="start"
               className={activeView === 'profile' ? 'is-active' : ''}
-              onClick={() => setActiveView('profile')}
-            >
-              <PersonOutlineRoundedIcon fontSize="small" />
-              <span>Profile Settings</span>
-            </button>
-          </div>
+            />
+          </Tabs>
+          </Box>
 
-          <button className="portal-signout logout-action" type="button" onClick={logout}>
+          <CommonButton className="portal-signout logout-action" onClick={logout}>
             <LogoutRoundedIcon fontSize="small" />
-            <span>Logout</span>
-          </button>
-        </aside>
+            Logout
+          </CommonButton>
+        </Box>
 
-        <div>{renderContent()}</div>
-      </main>
-    </div>
+        <Box>
+          <PortalContent
+            activeView={activeView}
+            isLoadingServices={isLoadingServices}
+            serviceOptions={serviceOptions}
+            selectedServiceIndex={selectedServiceIndex}
+            setSelectedServiceIndex={setSelectedServiceIndex}
+            monthLabel={monthLabel}
+            changeMonth={changeMonth}
+            weekDays={weekDays}
+            calendarDates={calendarDates}
+            selectedDay={selectedDay}
+            setSelectedDay={setSelectedDay}
+            timeSlots={timeSlots}
+            selectedTimeIndex={selectedTimeIndex}
+            setSelectedTimeIndex={setSelectedTimeIndex}
+            handleConfirmBooking={handleConfirmBooking}
+            userName={user?.name || ''}
+            userEmail={user?.email || ''}
+            isLoadingBookings={isLoadingBookings}
+            bookings={bookings}
+            formatBookingDate={formatBookingDate}
+            formatBookingTime={formatBookingTime}
+          />
+        </Box>
+      </Box>
+    </Box>
   )
 }
 

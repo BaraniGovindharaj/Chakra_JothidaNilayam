@@ -8,6 +8,66 @@ h1 {
   font-family: var(--font-family-heading);
 }
 
+.MuiTypography-root {
+  font-family: var(--font-family-body);
+}
+
+.MuiTypography-root.MuiTypography-h1,
+.MuiTypography-root.MuiTypography-h2,
+.MuiTypography-root.MuiTypography-h3,
+.MuiTypography-root.MuiTypography-h4,
+.MuiTypography-root.MuiTypography-h5,
+.MuiTypography-root.MuiTypography-h6 {
+  font-family: var(--font-family-body);
+}
+
+h1,
+.MuiTypography-root.MuiTypography-h1 {
+  font-size: 3rem !important;
+}
+
+h2,
+.MuiTypography-root.MuiTypography-h2 {
+  font-size: 2rem !important;
+}
+
+h3,
+h4,
+h5,
+.MuiTypography-root.MuiTypography-h3,
+.MuiTypography-root.MuiTypography-h4,
+.MuiTypography-root.MuiTypography-h5 {
+  font-size: 1rem !important;
+}
+
+h6,
+.MuiTypography-root.MuiTypography-h6 {
+  font-size: 0.78rem !important;
+}
+
+* {
+  scrollbar-color: var(--color-accent) rgba(170, 144, 207, 0.18);
+}
+
+*::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: transparent;
+  border: 1px solid var(--color-accent);
+  border-radius: var(--radius-pill);
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: transparent;
+}
+
 .section {
   width: min(1120px, 92%);
   margin: 0 auto;
@@ -197,7 +257,7 @@ h1 {
   color: var(--color-accent);
 }
 
-.hero-subtitle {
+.MuiTypography-root.hero-subtitle {
   max-width: 640px;
   margin: 1.1rem auto 1.8rem;
   color: var(--color-text-muted);
@@ -412,6 +472,11 @@ h1 {
 
 .contact-card {
   padding: 1rem;
+  margin-top: 1rem;
+}
+.MuiTypography-root.contact-title {
+  color: var(--color-accent);
+  font-size: var(--font-size-md);
 }
 
 .contact-card h4 {
@@ -424,7 +489,7 @@ h1 {
 }
 
 .contact-form {
-  padding: 1rem;
+  padding: 3rem 1rem;
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
@@ -467,7 +532,7 @@ h1 {
   font-size: var(--font-size-sm);
 }
 
-.footer-link {
+.MuiButtonBase-root.footer-link {
   display: block;
   width: 100%;
   border: 0;
@@ -478,10 +543,18 @@ h1 {
   padding: 0;
   text-align: left;
   cursor: pointer;
+  text-transform: capitalize;
 }
 
-.footer-link:hover {
+.MuiButtonBase-root.footer-link:hover {
   color: var(--color-text-primary);
+}
+.MuiTypography-root.footer-header {
+  font-family: var(--font-family-body);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-medium);
+  line-height: 1;
+  text-transform: capitalize;
 }
 
 @media (max-width: 900px) {
@@ -614,11 +687,16 @@ h1 {
 .booking-service-card p {
   margin: 0;
   color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+  font-family: var(--font-family-body);
+  font-weight: normal;
 }
 
 .booking-service-card strong {
   color: var(--color-accent);
-  font-size: var(--font-size-xl);
+  font-size: var(--font-size-sm);
+  font-family: var(--font-family-body);
+  font-weight: var(--font-weight-medium);
 }
 
 .booking-calendar {
@@ -646,7 +724,7 @@ h1 {
   gap: 0.6rem;
 }
 
-.booking-calendar-head button {
+.booking-calendar-nav-item {
   border: 1px solid var(--color-border);
   background: transparent;
   color: var(--color-text-primary);
@@ -681,7 +759,7 @@ h1 {
   gap: 0.45rem;
 }
 
-.booking-days button {
+.booking-day-item {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -695,13 +773,15 @@ h1 {
   cursor: pointer;
 }
 
-.booking-days .is-selected {
+.booking-day-item.is-selected {
   background: var(--color-accent);
   color: #170530;
   font-weight: var(--font-weight-bold);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-accent);
 }
 
-.booking-days button:disabled {
+.booking-day-item.is-empty {
   cursor: default;
   opacity: 0;
 }
@@ -713,7 +793,7 @@ h1 {
   gap: 0.6rem;
 }
 
-.booking-times button {
+.booking-time-item {
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   background: transparent;
@@ -721,9 +801,13 @@ h1 {
   font-weight: var(--font-weight-semibold);
   padding: 0.72rem;
   cursor: pointer;
+  text-align: center;
+}
+.MuiTabs-indicator{
+  display: none;
 }
 
-.booking-times .is-selected {
+.booking-time-item.is-selected {
   background: var(--color-accent);
   border-color: var(--color-accent);
   color: #170530;
@@ -814,6 +898,7 @@ h1 {
   padding: 1.1rem;
   display: flex;
   flex-direction: column;
+  /* height: max-content; */
   /* justify-content: space-between; */
 }
 
@@ -852,6 +937,7 @@ h1 {
   flex-direction: column;
   gap: 0.6rem;
   margin-bottom: 0.8rem;
+  align-items: flex-start;
 }
 
 .portal-menu button {
@@ -863,14 +949,19 @@ h1 {
   align-items: center;
   gap: 0.55rem;
   text-align: left;
-  padding: 0.72rem;
+  /* padding: 0.72rem; */
   cursor: pointer;
   font-weight: var(--font-weight-medium);
+  width: 100%;
+  justify-content: flex-start;
+  text-transform: capitalize;
 }
 
 .portal-menu button.is-active {
   background: rgba(208, 182, 244, 0.15);
   color: var(--color-accent);
+  width: 100%;
+  justify-content: flex-start;
 }
 
 .portal-signout {
@@ -907,6 +998,13 @@ h1 {
 
 .portal-content-card {
   padding: 1.2rem;
+}
+
+.portal-book-section {
+  max-height: 72vh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
 }
 
 .portal-content-card h1 {
@@ -1102,6 +1200,7 @@ h1 {
   font-weight: var(--font-weight-semibold);
   cursor: pointer;
   padding: 0;
+  text-decoration: underline;
 }
 
 .portal-login-actions {
@@ -1119,6 +1218,11 @@ h1 {
   display: flex;
   flex-direction: column;
   gap: 0.85rem;
+  max-height: 55vh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+  padding-right: 0.25rem;
 }
 
 .portal-booking-item {
@@ -1165,6 +1269,22 @@ h1 {
   background: rgba(244, 180, 0, 0.18);
   color: var(--color-accent);
 }
+.portal-status-badge.is-cancelled {
+  background: rgba(255, 0, 0, 0.15);
+  color: #ff4d4d;
+}
+.portal-status-badge.iscancelled {
+  background: rgba(255, 0, 0, 0.15);
+  color: #ff4d4d;
+}
+.portal-status-badge.is-in-progress {
+  background: rgba(0, 200, 255, 0.15);
+  color: #00c8ff;
+}
+.portal-status-badge.inprogress {
+  background: rgba(0, 200, 255, 0.15);
+  color: #00c8ff;
+}
 
 .portal-status-badge.is-completed {
   background: rgba(170, 144, 207, 0.22);
@@ -1201,6 +1321,14 @@ h1 {
   .portal-profile-grid {
     grid-template-columns: 1fr;
   }
+
+  .portal-booking-list {
+    max-height: 48vh;
+  }
+
+  .portal-book-section {
+    max-height: 65vh;
+  }
 }
 
 @media (max-width: 768px) {
@@ -1216,6 +1344,15 @@ h1 {
   .portal-booking-item {
     grid-template-columns: 1fr;
     gap: 0.55rem;
+  }
+
+  .portal-booking-list {
+    max-height: 42vh;
+    padding-right: 0.1rem;
+  }
+
+  .portal-book-section {
+    max-height: 58vh;
   }
 
   .portal-header-row {
@@ -1237,6 +1374,16 @@ h1 {
   }
 
   .portal-login-card {
+    margin: 0 auto;
+  }
+}
+@media screen and (min-width: 1140px) {
+  .portal-login-form{
+    width: 80%;
+    margin: 0 auto;
+  }
+  .contact-form input, .contact-form textarea, .contact-form .MuiButtonBase-root.common-button{
+    width: 80%;
     margin: 0 auto;
   }
 }

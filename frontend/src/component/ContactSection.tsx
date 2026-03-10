@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import { Box, TextField, Typography } from '@mui/material'
+import CommonButton from './ReusableButton/CommonButton'
 import { apiPost } from '../services/apiHandler'
 import type { HomeContent } from './types'
 import { useUser } from '../context/userProvider'
@@ -56,47 +58,68 @@ function ContactSection({ content }: Props) {
   }
 
   return (
-    <section id="contact" className="section contact">
-      <div className="contact-left">
-        <p className="section-kicker">GET IN TOUCH</p>
-        <h2>{contact?.title}</h2>
-        <p>{contact?.description}</p>
-        <div className="contact-card">
-          <h4>Office Hours</h4>
-          <p>{contact?.officeHours?.weekdays}</p>
-          <p>{contact?.officeHours?.weekend}</p>
-          <p>{contact?.location}</p>
-        </div>
-      </div>
-      <form className="contact-form" onSubmit={handleSubmit}>
-        <input
+    <Box component="section" id="contact" className="section contact">
+      <Box className="contact-left">
+        <Typography component="p" className="section-kicker">GET IN TOUCH</Typography>
+        <Typography component="h2" variant="h2">{contact?.title}</Typography>
+        <Typography component="p">{contact?.description}</Typography>
+        <Box className="contact-card">
+          <Typography component="h4" variant="h4" className='contact-title'>Office Hours</Typography>
+          <Typography component="p">{contact?.officeHours?.weekdays}</Typography>
+          <Typography component="p">{contact?.officeHours?.weekend}</Typography>
+          <Typography component="p">{contact?.location}</Typography>
+        </Box>
+      </Box>
+      <Box component="form" className="contact-form" onSubmit={handleSubmit}>
+        <TextField
           name="userName"
           placeholder={fields[0] || 'User Name'}
           value={formData.userName}
           onChange={handleChange}
+          variant="standard"
+          fullWidth
+          slotProps={{
+            input: { disableUnderline: true },
+          }}
         />
-        <input
+        <TextField
           name="phoneNumber"
           placeholder={fields[1] || 'Phone Number'}
           value={formData.phoneNumber}
           onChange={handleChange}
+          variant="standard"
+          fullWidth
+          slotProps={{
+            input: { disableUnderline: true },
+          }}
         />
-         <input
+         <TextField
           name="email"
           placeholder={fields[2] || 'Email'}
           value={formData.email}
           onChange={handleChange}
+          variant="standard"
+          fullWidth
+          slotProps={{
+            input: { disableUnderline: true },
+          }}
         />
-        <textarea
+        <TextField
           name="message"
           placeholder={fields[3] || 'Message'}
+          multiline
           rows={4}
           value={formData.message}
           onChange={handleChange}
+          variant="standard"
+          fullWidth
+          slotProps={{
+            input: { disableUnderline: true },
+          }}
         />
-        <button type="submit" className="btn btn-primary">{contact?.submitButton}</button>
-      </form>
-    </section>
+        <CommonButton type="submit" className="btn btn-primary">{contact?.submitButton}</CommonButton>
+      </Box>
+    </Box>
   )
 }
 

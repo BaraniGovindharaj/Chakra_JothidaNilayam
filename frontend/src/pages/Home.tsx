@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { Box } from '@mui/material'
 import AboutSection from '../component/AboutSection'
 import ContactSection from '../component/ContactSection'
 import FooterSection from '../component/FooterSection'
@@ -114,7 +115,7 @@ function Home() {
 	}
 
 	return (
-		<div className="page">
+		<Box className="page">
 			<Header
 				brandName={content?.brand?.name}
 				navigation={content?.navigation}
@@ -130,7 +131,7 @@ function Home() {
 				content={content}
 				onHome={() => setActivePage('home')}
 			/>
-		</div>
+		</Box>
 	)
 }
 

@@ -1,4 +1,7 @@
 import type { HomeContent } from './types'
+import { Box, Typography } from '@mui/material'
+import CommonButton from './ReusableButton/CommonButton'
+import { useUser } from '../context/userProvider'
 
 type Props = {
   content: HomeContent | null
@@ -6,6 +9,7 @@ type Props = {
 }
 
 function HeroSection({ content, onBookNow }: Props) {
+  const { setActivePage } = useUser()
   if (!content) return null
 
   const tagline = content.brand?.tagline || ''
@@ -13,20 +17,28 @@ function HeroSection({ content, onBookNow }: Props) {
   const titleStart = tagline.includes(starsWord) ? tagline.split(starsWord)[0] : tagline
 
   return (
-    <section id="home" className="hero section">
-      <p className="hero-badge">{content.hero?.badge}</p>
-      <h1>
+    <Box component="section" id="home" className="hero section">
+      <Typography component="p" className="hero-badge">{content.hero?.badge}</Typography>
+      <Typography component="h1" variant="h1">
         {titleStart}
-        <span>{starsWord}</span>
-      </h1>
-      <p className="hero-subtitle">{content.brand?.subTagline}</p>
-      <div className="hero-actions">
-        <button className="btn btn-primary" onClick={onBookNow}>
+        <Typography component="span">{starsWord}</Typography>
+      </Typography>
+      <Typography component="p" className="hero-subtitle">{content.brand?.subTagline}</Typography>
+      <Box className="hero-actions">
+        <CommonButton className="btn btn-primary" onClick={onBookNow}>
           {content.hero?.primaryButton}
-        </button>
-        <button className="btn btn-outline">{content.hero?.secondaryButton}</button>
-      </div>
-    </section>
+        </CommonButton>
+        <CommonButton className="btn btn-outline"
+        onClick={()=>{
+          setActivePage('home')
+          const target = document.getElementById('services')
+          if(target){
+            target.scrollIntoView({behavior:'smooth', block:'start'})
+          }
+        }}
+        >{content.hero?.secondaryButton}</CommonButton>
+      </Box>
+    </Box>
   )
 }
 

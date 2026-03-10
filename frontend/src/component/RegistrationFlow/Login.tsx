@@ -3,6 +3,8 @@ import AlternateEmailRoundedIcon from '@mui/icons-material/AlternateEmailRounded
 import AutoAwesomeOutlinedIcon from '@mui/icons-material/AutoAwesomeOutlined'
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded'
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
+import { Box, IconButton, TextField, Typography } from '@mui/material'
+import CommonButton from '../ReusableButton/CommonButton'
 import { apiPost } from '../../services/apiHandler';
 import { useUser } from '../../context/userProvider'
 type LoginPageProps = {
@@ -40,75 +42,84 @@ function LoginPage({ brandName, onBackToHome, onBookNow, onSignup }: LoginPagePr
   }
 
   return (
-    <div className="portal-page-wrap login-popup-wrap">
-      <section className="section login-popup-container">
-        <div className="portal-content-card portal-login-card login-popup-card">
-          <button
-            type="button"
+    <Box className="portal-page-wrap login-popup-wrap">
+      <Box component="section" className="section login-popup-container">
+        <Box className="portal-content-card portal-login-card login-popup-card">
+          <IconButton
             className="login-close-btn"
             aria-label="Close login popup"
             onClick={onBackToHome}
           >
             <CloseRoundedIcon fontSize="small" />
-          </button>
+          </IconButton>
 
-          <div className="login-popup-icon" aria-hidden="true">
+          <Box className="login-popup-icon" aria-hidden="true">
             <AutoAwesomeOutlinedIcon fontSize="small" />
-          </div>
-          <h1>Welcome Back</h1>
-          <p className="login-popup-subtitle">Sign in to access your account</p>
+          </Box>
+          <Typography component="h1" variant="h1">Welcome Back</Typography>
+          <Typography component="p" className="login-popup-subtitle">Sign in to access your account</Typography>
 
-          <form className="portal-login-form" onSubmit={handleSubmit}>
-            <label htmlFor="email">Email Address</label>
-            <div className="login-input-wrap">
-              <span aria-hidden="true"><AlternateEmailRoundedIcon fontSize="small" /></span>
-              <input
+          <Box component="form" className="portal-login-form" onSubmit={handleSubmit}>
+            <Typography component="label" htmlFor="email">Email Address</Typography>
+            <Box className="login-input-wrap">
+              <Typography component="span" aria-hidden="true"><AlternateEmailRoundedIcon fontSize="small" /></Typography>
+              <TextField
                 id="email"
                 name="email"
                 type="email"
                 placeholder="you@example.com"
                 value={formData.email}
                 onChange={handleInputChange}
+                variant="standard"
+                fullWidth
+                slotProps={{
+                  input: { disableUnderline: true },
+                }}
               />
-            </div>
+            </Box>
 
-            <label htmlFor="password">Password</label>
-            <div className="login-input-wrap">
-              <span aria-hidden="true"><LockOutlinedIcon fontSize="small" /></span>
-              <input
+            <Typography component="label" htmlFor="password">Password</Typography>
+            <Box className="login-input-wrap">
+              <Typography component="span" aria-hidden="true"><LockOutlinedIcon fontSize="small" /></Typography>
+              <TextField
                 id="password"
                 name="password"
                 type="password"
                 placeholder="••••••••"
                 value={formData.password}
                 onChange={handleInputChange}
+                variant="standard"
+                fullWidth
+                slotProps={{
+                  input: { disableUnderline: true },
+                }}
               />
-            </div>
-            <button type="submit" className="btn btn-primary login-submit-btn">
+            </Box>
+            <CommonButton type="submit" className="btn btn-primary login-submit-btn">
               Sign In
-            </button>
+            </CommonButton>
 
-            <div className="login-divider" aria-hidden="true">
-              <span>or</span>
-            </div>
+            <Box className="login-divider" aria-hidden="true">
+              <Typography component="span">or</Typography>
+            </Box>
 
-            <p className="login-popup-footer-note">
+            <Typography component="p" className="login-popup-footer-note">
               Don&apos;t have an account?{' '}
-              <button type="button" className="login-link-btn" onClick={onSignup}>
+              <span className="login-link-btn" onClick={onSignup}>
                 Sign Up
-              </button>
-            </p>
+              </span>
+            </Typography>
 
-            <p className="login-popup-footer-note">
+            <Typography component="p" className="login-popup-footer-note">
               Need a session with {brandName || 'Sri Astrology'}?{' '}
-              <button type="button" className="login-link-btn" onClick={onBookNow}>
+              <CommonButton onClick={onBookNow}>
                 Book Consultation
-              </button>
-            </p>
-          </form>
-        </div>
-      </section>
-    </div>
+              </CommonButton>
+            </Typography>
+          </Box>
+        </Box>
+      </Box>
+    </Box>
   )
 }
 
