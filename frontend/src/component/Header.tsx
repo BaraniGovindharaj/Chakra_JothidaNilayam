@@ -13,9 +13,11 @@ type Props = {
   onBookNow?: () => void
   onLogin?: () => void
   onHome?: () => void
+  onSectionNavigate?: (section: string) => void
+  onDashboard?: () => void
 }
 
-function Header({ brandName, navigation, onBookNow, onLogin, onHome }: Props) {
+function Header({ brandName, navigation, onBookNow, onLogin, onHome, onSectionNavigate, onDashboard }: Props) {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isAvatarMenuOpen, setIsAvatarMenuOpen] = useState(false)
   const navItems = navigation?.length ? navigation : ['Home', 'Services', 'About', 'Contact']
@@ -40,12 +42,14 @@ function Header({ brandName, navigation, onBookNow, onLogin, onHome }: Props) {
     handleNavClick()
 
     if (item.toLowerCase() === 'home') {
+      onSectionNavigate?.('')
       onHome?.()
       window.scrollTo({ top: 0, behavior: 'smooth' })
       return
     }
 
     const targetId = item.toLowerCase().replace(/\s+/g, '')
+    onSectionNavigate?.(targetId)
     const target = document.getElementById(targetId)
     if (target) {
       target.scrollIntoView({ behavior: 'smooth', block: 'start' })
@@ -54,7 +58,11 @@ function Header({ brandName, navigation, onBookNow, onLogin, onHome }: Props) {
 
   return (
     <Box component="header" className="navbar section">
-      <Box className="logo">
+      <Box className="logo" onClick={() => {
+        onSectionNavigate?.('')
+        onHome?.()
+        window.scrollTo({ top: 0, behavior: 'smooth' })
+      }}>
         <AutoAwesomeOutlinedIcon className="logo-icon" fontSize="small" />
         <Typography component="span">{brandName || 'Sri Chakra Jothidanilayam'}</Typography>
       </Box>
@@ -96,7 +104,7 @@ function Header({ brandName, navigation, onBookNow, onLogin, onHome }: Props) {
               className="btn btn-primary"
               onClick={() => {
                 setIsAvatarMenuOpen(false)
-                setActivePage('portal')
+                onDashboard?.() ?? setActivePage('portal')
               }}
             >
               Dashboard

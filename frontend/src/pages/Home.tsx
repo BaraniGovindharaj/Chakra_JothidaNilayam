@@ -17,9 +17,90 @@ import '../App.css'
 
 function Home() {
 	const [content, setContent] = useState<HomeContent | null>(null)
+	const [pendingSection, setPendingSection] = useState<string>('')
 	const hasFetchedHomeContent = useRef(false)
 	const hasFetchedServiceDetails = useRef(false)
 	const { isLoggedIn, activePage, setActivePage } = useUser()
+
+	const updatePath = (path: string, replace = false) => {
+		if (window.location.pathname === path) {
+			return
+		}
+
+		if (replace) {
+			window.history.replaceState({}, '', path)
+			return
+		}
+
+		window.history.pushState({}, '', path)
+	}
+
+	const goHome = (section = '', replace = false) => {
+		setActivePage('home')
+		const path = section ? `/home/${section}` : '/home'
+		updatePath(path, replace)
+		setPendingSection(section)
+	}
+
+	useEffect(() => {
+		const syncFromPath = (replace = false) => {
+			const path = window.location.pathname.toLowerCase()
+
+			if (path.startsWith('/dashboard')) {
+				setActivePage('portal')
+				return
+			}
+
+			if (path === '/login') {
+				setActivePage('login')
+				return
+			}
+
+			if (path === '/signup') {
+				setActivePage('signup')
+				return
+			}
+
+			if (path.startsWith('/home')) {
+				setActivePage('home')
+				const section = path.split('/')[2] ?? ''
+				setPendingSection(section)
+				return
+			}
+
+			goHome('', replace)
+		}
+
+		syncFromPath(true)
+
+		const onPopState = () => {
+			syncFromPath(true)
+		}
+
+		window.addEventListener('popstate', onPopState)
+		return () => window.removeEventListener('popstate', onPopState)
+	}, [setActivePage])
+
+	useEffect(() => {
+		if (activePage !== 'home') {
+			return
+		}
+
+		if (!pendingSection) {
+			window.scrollTo({ top: 0, behavior: 'smooth' })
+			return
+		}
+
+		const scrollTarget = () => {
+			const target = document.getElementById(pendingSection)
+			if (target) {
+				target.scrollIntoView({ behavior: 'smooth', block: 'start' })
+			}
+		}
+
+		const timerId = window.setTimeout(scrollTarget, 0)
+		return () => window.clearTimeout(timerId)
+	}, [activePage, pendingSection])
 
 	useEffect(() => {
 		if (hasFetchedHomeContent.current) {
@@ -67,26 +148,30 @@ function Home() {
 		if (!isLoggedIn) {
 			alert('Please login to book a service.')
 			setActivePage('login')
+			updatePath('/login')
 			return
 		}
 		setActivePage('portal')
+		updatePath('/dashboard')
 		window.scrollTo({ top: 0, behavior: 'smooth' })
 	}
 
 	const handleLoginClick = () => {
 		setActivePage('login')
+		updatePath('/login')
 		window.scrollTo({ top: 0, behavior: 'smooth' })
 	}
 
 	const handleSignupClick = () => {
 		setActivePage('signup')
+		updatePath('/signup')
 		window.scrollTo({ top: 0, behavior: 'smooth' })
 	}
 
 	if (activePage === 'portal') {
 		return (
 			<PortalPage
-				onBackToHome={() => setActivePage('home')}
+				onBackToHome={() => goHome('')}
 				brandName={content?.brand?.name}
 			/>
 		)
@@ -96,7 +181,7 @@ function Home() {
 		return (
 			<LoginPage
 				brandName={content?.brand?.name}
-				onBackToHome={() => setActivePage('home')}
+				onBackToHome={() => goHome('')}
 				onBookNow={handleBookNowClick}
 				onSignup={handleSignupClick}
 			/>
@@ -107,7 +192,7 @@ function Home() {
 		return (
 			<SignupPage
 				brandName={content?.brand?.name}
-				onBackToHome={() => setActivePage('home')}
+				onBackToHome={() => goHome('')}
 				onBookNow={handleBookNowClick}
 				onLogin={handleLoginClick}
 			/>
@@ -121,6 +206,12 @@ function Home() {
 				navigation={content?.navigation}
 				onBookNow={handleBookNowClick}
 				onLogin={handleLoginClick}
+				onHome={() => goHome('')}
+				onSectionNavigate={(section) => goHome(section)}
+				onDashboard={() => {
+					setActivePage('portal')
+					updatePath('/dashboard')
+				}}
 			/>
 			<HeroSection content={content} onBookNow={handleBookNowClick} />
 			<ServicesSection content={content} onBookNow={handleBookNowClick} />
@@ -129,7 +220,8 @@ function Home() {
 			<ContactSection content={content} />
 			<FooterSection
 				content={content}
-				onHome={() => setActivePage('home')}
+				onHome={() => goHome('')}
+				onSectionNavigate={(section) => goHome(section)}
 			/>
 		</Box>
 	)

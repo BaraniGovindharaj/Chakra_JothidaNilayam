@@ -103,6 +103,35 @@ function PortalPage({ onBackToHome, brandName }: PortalPageProps) {
   const [selectedDay, setSelectedDay] = useState<number | null>(null)
   const [currentMonth, setCurrentMonth] = useState(getDefaultMonth)
 
+  useEffect(() => {
+    const path = window.location.pathname
+
+    if (path.startsWith('/dashboard/profile')) {
+      setActiveView('profile')
+      return
+    }
+
+    if (path.startsWith('/dashboard/book')) {
+      setActiveView('book')
+      return
+    }
+
+    setActiveView('bookings')
+  }, [])
+
+  useEffect(() => {
+    const path =
+      activeView === 'profile'
+        ? '/dashboard/profile'
+        : activeView === 'book'
+          ? '/dashboard/book'
+          : '/dashboard'
+
+    if (window.location.pathname !== path) {
+      window.history.pushState({}, '', path)
+    }
+  }, [activeView])
+
   const loadBookings = async () => {
     setIsLoadingBookings(true)
     try {

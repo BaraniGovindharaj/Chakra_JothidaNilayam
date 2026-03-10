@@ -1,26 +1,29 @@
 import type { HomeContent } from './types'
 import AutoAwesomeOutlinedIcon from '@mui/icons-material/AutoAwesomeOutlined';
 import { Box, Button, Typography } from '@mui/material'
-import CommonButton from './ReusableButton/CommonButton'
+import FooterContactInfo from './FooterContactInfo'
 
 type Props = {
   content: HomeContent | null
   onHome?: () => void
+  onSectionNavigate?: (section: string) => void
 }
 
-function FooterSection({ content, onHome }: Props) {
+function FooterSection({ content, onHome, onSectionNavigate }: Props) {
   if (!content) return null
 
   const footer = content.footer
 
   const handleSectionNavigation = (item: string) => {
     if (item.toLowerCase() === 'home') {
+      onSectionNavigate?.('')
       onHome?.()
       window.scrollTo({ top: 0, behavior: 'smooth' })
       return
     }
 
     const targetId = item.toLowerCase().replace(/\s+/g, '')
+    onSectionNavigate?.(targetId)
     const target = document.getElementById(targetId)
     if (target) {
       target.scrollIntoView({ behavior: 'smooth', block: 'start' })
@@ -52,13 +55,12 @@ function FooterSection({ content, onHome }: Props) {
         <Typography component="h4" variant="h4" className='footer-header'>Services</Typography>
         {footer?.services?.map((item) => <Typography component="p" key={item}>{item}</Typography>)}
       </Box>
-      <Box>
-        <Typography component="h4" variant="h4" className='footer-header'>Contact Us</Typography>
-        <Typography component="p">{footer?.contact?.address}</Typography>
-        <Typography component="p">{footer?.contact?.phone}</Typography>
-        <Typography component="p">{footer?.contact?.email}</Typography>
-        <Typography component="p">{footer?.copyright}</Typography>
-      </Box>
+      <FooterContactInfo
+        address={footer?.contact?.address}
+        phone={footer?.contact?.phone}
+        email={footer?.contact?.email}
+        copyright={footer?.copyright}
+      />
     </Box>
   )
 }
