@@ -8,6 +8,7 @@ import HeroSection from '../component/HeroSection'
 import PortalPage from '../component/PortalPage'
 import LoginPage from '../component/RegistrationFlow/Login'
 import SignupPage from '../component/RegistrationFlow/Signup'
+import VerifyOtpPage from '../component/RegistrationFlow/VerifyOtp'
 import ServicesSection from '../component/ServicesSection'
 import TestimonialsSection from '../component/TestimonialsSection'
 import { type HomeContent } from '../component/types'
@@ -19,6 +20,7 @@ import '../App.css'
 function Home() {
 	const [content, setContent] = useState<HomeContent | null>(null)
 	const [pendingSection, setPendingSection] = useState<string>('')
+	const [verifyOtpPhone, setVerifyOtpPhone] = useState<string>('')
 	const hasFetchedHomeContent = useRef(false)
 	const hasFetchedServiceDetails = useRef(false)
 	const { isLoggedIn, activePage, setActivePage } = useUser()
@@ -209,6 +211,20 @@ function Home() {
 				onBackToHome={() => goHome('')}
 				onBookNow={handleBookNowClick}
 				onLogin={handleLoginClick}
+				onVerifyOtp={(phone) => {
+					setVerifyOtpPhone(phone)
+					setActivePage('verify-otp')
+				}}
+			/>
+		)
+	}
+
+	if (activePage === 'verify-otp') {
+		return (
+			<VerifyOtpPage
+				phoneNumber={verifyOtpPhone}
+				onBackToHome={() => goHome('')}
+				onSignup={handleSignupClick}
 			/>
 		)
 	}

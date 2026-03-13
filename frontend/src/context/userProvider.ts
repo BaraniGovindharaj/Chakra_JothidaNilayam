@@ -17,8 +17,8 @@ type LoginPayload = {
 type UserContextValue = {
 	user: UserProfile | null
 	isLoggedIn: boolean
-	activePage: 'home' | 'portal' | 'login' | 'signup'
-	setActivePage: React.Dispatch<React.SetStateAction<'home' | 'portal' | 'login' | 'signup'>>
+	activePage: 'home' | 'portal' | 'login' | 'signup' | 'verify-otp'
+	setActivePage: React.Dispatch<React.SetStateAction<'home' | 'portal' | 'login' | 'signup' | 'verify-otp'>>
 	setUserFromLogin: (payload: LoginPayload) => void
 	logout: () => void
 }
@@ -48,7 +48,7 @@ type UserProviderProps = {
 
 export function UserProvider({ children }: UserProviderProps) {
 	const [user, setUser] = useState<UserProfile | null>(null)
-	const [activePage, setActivePage] = useState<'home' | 'portal' | 'login' | 'signup'>('home')
+	const [activePage, setActivePage] = useState<'home' | 'portal' | 'login' | 'signup' | 'verify-otp'>('home')
 
 	useEffect(() => {
 		setUser(readUserFromStorage())
