@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useMemo, useState } from 'react'
+import React, { createContext, useContext, useMemo, useState } from 'react'
 import showToast from '../component/Toast/Toast'
 
 type UserProfile = {
@@ -12,6 +12,7 @@ type LoginPayload = {
 	user_id?: string
 	name?: string
 	email?: string
+	access_token?: string
 }
 
 type UserContextValue = {
@@ -26,15 +27,25 @@ type UserContextValue = {
 const USER_ID_KEY = 'userId'
 const USER_NAME_KEY = 'name'
 const USER_EMAIL_KEY = 'email'
+const ACCESS_TOKEN_KEY = 'accessToken'
 
 const UserContext = createContext<UserContextValue | undefined>(undefined)
+
+const clearAuthStorage = () => {
+	localStorage.removeItem(USER_ID_KEY)
+	localStorage.removeItem(USER_NAME_KEY)
+	localStorage.removeItem(USER_EMAIL_KEY)
+	localStorage.removeItem(ACCESS_TOKEN_KEY)
+}
 
 const readUserFromStorage = (): UserProfile | null => {
 	const userId = localStorage.getItem(USER_ID_KEY) || ''
 	const name = localStorage.getItem(USER_NAME_KEY) || ''
 	const email = localStorage.getItem(USER_EMAIL_KEY) || ''
+	const accessToken = localStorage.getItem(ACCESS_TOKEN_KEY) || ''
 
-	if (!userId) {
+	if (!userId || !accessToken) {
+		clearAuthStorage()
 		return null
 	}
 
@@ -47,12 +58,8 @@ type UserProviderProps = {
 }
 
 export function UserProvider({ children }: UserProviderProps) {
-	const [user, setUser] = useState<UserProfile | null>(null)
+	const [user, setUser] = useState<UserProfile | null>(readUserFromStorage)
 	const [activePage, setActivePage] = useState<'home' | 'portal' | 'login' | 'signup' | 'verify-otp'>('home')
-
-	useEffect(() => {
-		setUser(readUserFromStorage())
-	}, [])
 
 	const setUserFromLogin = (payload: LoginPayload) => {
 		const nextUser: UserProfile = {
@@ -68,14 +75,13 @@ export function UserProvider({ children }: UserProviderProps) {
 		localStorage.setItem(USER_ID_KEY, nextUser.userId)
 		localStorage.setItem(USER_NAME_KEY, nextUser.name)
 		localStorage.setItem(USER_EMAIL_KEY, nextUser.email)
+		localStorage.setItem(ACCESS_TOKEN_KEY, payload.access_token || '')
 
 		setUser(nextUser)
 	}
 
 	const logout = () => {
-		localStorage.removeItem(USER_ID_KEY)
-		localStorage.removeItem(USER_NAME_KEY)
-		localStorage.removeItem(USER_EMAIL_KEY)
+		clearAuthStorage()
 		setUser(null)
 		setActivePage('home')
 		if (window.location.pathname.startsWith('/dashboard')) {
